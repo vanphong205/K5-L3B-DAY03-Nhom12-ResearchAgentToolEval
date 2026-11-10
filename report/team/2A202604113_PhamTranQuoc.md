@@ -4,52 +4,103 @@
 
 - Họ tên: Phạm Trấn Quốc
 - MSSV: 2A202604113
-- Email: chưa cung cấp
+- Email: phamquoc896@gmail.com
+- GitHub: [Quoosc](https://github.com/Quoosc)
+- Nhóm/lớp: Nhóm 12, L3B
 - Vai trò: Evaluation
 
-## 2. Phần việc phụ trách
+## 2. Vai trò và mục tiêu công việc
 
-Tôi phụ trách toàn bộ C5/CP4 — Team Evaluation. Công việc gồm xác định yêu cầu rubric, thiết kế bộ Group Eval gồm đúng 10 case mới, kiểm tra schema và tính đa dạng của case, tích hợp các case với hai tool mới `github_search` và `hf_search`, chạy group eval bằng provider thật, phân tích expected/actual trong run JSON, cập nhật bảng B3 và ghi nhận các giới hạn của kết quả.
+Tôi phụ trách **CP4 — Team Evaluation**, tương ứng với **C5 — 10 case eval nhóm** trong rubric. Mục tiêu của phần này là bổ sung một bộ kiểm tra do nhóm tự thiết kế để đo các tình huống mà bộ base chưa tập trung, đặc biệt là việc chọn đúng tool mới, truyền đúng tham số, giữ và sửa thông tin qua nhiều lượt, cũng như chuyển giữa các nguồn tra cứu.
 
-Phạm vi cá nhân của tôi tập trung vào hành vi của model (routing, arguments, boundary và multi-turn context), không thay thế unit test của tool. Unit test kiểm tra implementation Python; Group Eval kiểm tra model có chọn đúng tool và truyền đúng arguments hay không.
+Deliverable của CP4 gồm ba phần liên kết với nhau: bộ 10 case trong `starter_v0/data/eval_group.json`, một run được tạo bởi `run_eval.py --suite group`, và phần mô tả kết quả trong bảng B3 của `report/team/group_report.md`. Rubric C5 yêu cầu đúng 5 case single-turn và 5 case multi-turn, mỗi case có expected behavior cùng `metadata.what_it_tests`, và phải có case kiểm tra route tới tool mới.
 
-## 3. Đóng góp cụ thể
+Group Eval đánh giá quyết định của model trước khi nội dung tool được dùng: tool name, số lần gọi và các arguments được nêu trong `expect`. Đây là phần khác với unit test của tool, vốn kiểm tra implementation Python như xử lý input xấu hoặc lỗi HTTP. Vì vậy, tôi giữ nội dung đánh giá ở mức agent behavior và ghi riêng khi API trả lỗi để không nhầm lỗi dịch vụ với lỗi routing.
 
-1. Rà `README.md`, `CHECKPOINTS.md`, `RUBRIC.md`, `SUBMISSION.md`, mẫu `group_report.md`, danh sách tool và schema của `run_eval.py` để xác định đúng yêu cầu CP4.
-2. Thiết kế 5 case single-turn và 5 case multi-turn. Năm case đầu dùng `query`; năm case sau dùng `turns`, để kiểm tra cả routing trong một lượt và khả năng giữ/cập nhật context qua nhiều lượt.
-3. Viết 10 case `G01`–`G10`; mỗi case có `phase="B"`, `suite="group"`, `failure_type`, `expect` và `metadata.what_it_tests`. Các case bao phủ GitHub repository, Hugging Face dataset/model, policy nội bộ, clarify khi thiếu thông tin, chuyển từ repository sang paper, chỉnh sửa query/language/sort/limit và gọi đồng thời hai tool.
-4. Kiểm tra tính độc lập của bộ case: G01–G03 và G06–G10 tập trung vào routing/arguments/multi-turn riêng, G04 kiểm tra missing information, G05 kiểm tra policy area, G08 kiểm tra chuyển tool, G10 kiểm tra multi-tool call. G03 chỉ yêu cầu routing để không phạt các cách diễn đạt query tương đương.
-5. Sau khi `hf_search` được tích hợp, cập nhật G02 và G10 để bộ eval có bằng chứng route tới cả hai tool mới. Điều chỉnh G05 sang tình huống rate limit để phân biệt `policy(tool_usage)` với web search và tránh trùng bộ extension.
-6. Chạy Group Eval bằng OpenAI `gpt-4o-mini` với nhãn cuối `v3`, đủ 10/10 case được đo và 0 provider error. Kết quả cuối: 7/10 case pass, `case_accuracy=0.70`, `tool_routing_accuracy=0.90`, `argument_accuracy=0.70`, `multiturn_accuracy=0.80`.
-7. Đọc `actual_tool_calls`, `failures`, `observed_mismatch` và `tool_results` trong run JSON để phân tích ba case FAIL: G04 model đoán query thay vì clarify; G05 chọn đúng policy nhưng dùng `policy_area=all`; G09 bỏ mất điều kiện “asynchronous” khi cập nhật query.
-8. Đối chiếu lỗi model với lỗi dịch vụ: GitHub Search API trả HTTP 403 do rate limit ở các lần gọi GitHub. Vì vậy tôi ghi rõ rằng harness vẫn đo routing/arguments, nhưng dữ liệu repository thực tế không được xác nhận.
-9. Điền và cập nhật mục B3 trong báo cáo nhóm, gồm danh sách 10 case, expected behavior, PASS/FAIL, phân tích ba lỗi, metric, run hợp lệ và giới hạn của API.
+## 3. Công việc đã thực hiện
 
-## 4. Bằng chứng
+### 3.1. Rà yêu cầu và contract của harness
 
-| Hạng mục | File / kết quả |
-|---|---|
-| Bộ Group Eval | [eval_group.json](../../starter_v0/data/eval_group.json) |
-| Run chính | [v3_B_group_openai_20261110T192353230210.json](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json) |
-| Bảng B3, phân tích lỗi và giới hạn | [group_report.md](group_report.md) |
-| Registry và tool mới | [tools/__init__.py](../../starter_v0/tools/__init__.py), [tools/github_search/](../../starter_v0/tools/github_search/), [tools/hf_search/](../../starter_v0/tools/hf_search/) |
-| Khai báo tool | [tools.yaml](../../starter_v0/artifacts/tools.yaml) |
-| Kiểm tra contract | `python -m pytest tests/test_tool_contract.py -q` → 65 passed sau khi tích hợp `hf_search` |
+Trước khi tạo case, tôi rà `README.md`, `CHECKPOINTS.md`, `RUBRIC.md`, `SUBMISSION.md`, mẫu group report, `starter_v0/run_eval.py`, tool declarations trong `artifacts/tools.yaml` và registry trong `tools/__init__.py`. Việc này giúp xác định schema mà harness thực sự đọc: `phase`, `query` hoặc `turns`, `failure_type`, `expect` và `metadata.what_it_tests`.
 
-**AI/công cụ đã dùng:** Codex hỗ trợ rà yêu cầu, soạn case và tổng hợp báo cáo; Python `run_eval.py` gọi provider OpenAI và ghi run JSON thật. Tôi kiểm tra lại số lượng 5 single + 5 multi, `summary` và từng `results[*].result` trong run, đối chiếu expected/actual với file case. Không dùng AI để tạo số liệu hoặc run giả.
+Tôi cũng kiểm tra cách chấm trong `run_eval.py`. Harness so tên tool và một tập con arguments được khai báo trong `expect`; chuỗi được chuẩn hóa chữ hoa/thường và khoảng trắng, nhưng không đánh giá ngữ nghĩa của hai câu query tương đương. Do đó, G03 chỉ kiểm tra routing sang `github_search`, không khóa expected vào một cách viết query duy nhất.
 
-**Lệnh tái hiện:** chạy từ `starter_v0/` sau khi cấu hình `.env` và cài `requirements.txt`:
+### 3.2. Thiết kế bộ 10 case
+
+Bộ case có đúng 10 ID duy nhất: G01–G05 là single-turn dùng `query`; G06–G10 là multi-turn dùng `turns`. Nội dung được viết mới cho Group Eval và rà lại để tránh lặp nguyên văn các câu hỏi trong `eval_base.json` hoặc `eval_research_extension.json`.
+
+| Case | Hành vi được kiểm tra | Expected chính |
+|---|---|---|
+| G01 | Tìm GitHub repository Python về RAG, trích ngôn ngữ, sort và số lượng | `github_search` với `python`, `stars`, limit 3 |
+| G02 | Tìm dataset tiếng Việt trên Hugging Face, chọn loại dataset và sort theo cập nhật | `hf_search` với `kind=datasets`, `sort=lastModified`, limit 4 |
+| G03 | Phân biệt yêu cầu tìm repository mã nguồn với tìm paper hoặc tra web | `github_search` |
+| G04 | Nhận ra thiếu chủ đề tìm repository và hỏi lại thay vì tự đoán | `clarify(response_type=text)` |
+| G05 | Tra chính sách nội bộ về cách ghi nhận API rate limit | `policy(policy_area=tool_usage)` |
+| G06 | Giữ chủ đề vector database từ lượt trước, nhận ngôn ngữ và limit ở lượt mới | `github_search` với `python`, `stars`, limit 4 |
+| G07 | Áp dụng yêu cầu đổi sort và limit trong lượt sau, giữ query/language cũ | `github_search` với `updated`, limit 2 |
+| G08 | Chuyển từ yêu cầu tìm repository sang tìm paper arXiv | `papers` |
+| G09 | Cập nhật ngôn ngữ và chủ đề query trong hội thoại nhiều lượt | `github_search` với Python và query giữ ý “asynchronous” |
+| G10 | Kết hợp yêu cầu tìm repository GitHub trước đó với model trên Hugging Face | Gọi cả `github_search` và `hf_search` |
+
+G02 và G10 kiểm tra hai tool mới đang có trong checkout: `hf_search` và `github_search`. G10 kiểm tra routing tới cả hai tool trong cùng lượt. G04 kiểm tra hành vi khi thiếu thông tin; G05 kiểm tra lựa chọn vùng policy; G06, G07 và G09 tập trung vào carry-over/correction trong hội thoại; G08 kiểm tra chuyển đổi loại nguồn.
+
+Trong quá trình rà, tôi đổi G05 từ một câu hỏi về API key vì nội dung đó quá gần case data-privacy có sẵn trong extension. Case cuối chuyển sang quy tắc xử lý rate limit thuộc `tool_usage`. Tôi cũng điều chỉnh G10 để đo tình huống kết hợp GitHub với Hugging Face. Các quyết định này được ghi lại trong lịch sử thay đổi của bộ eval.
+
+### 3.3. Chạy eval và phân tích run JSON
+
+Lệnh dùng để tạo run chính, chạy từ thư mục `starter_v0/`:
 
 ```powershell
 python run_eval.py --provider openai --version v3 --suite group --eval-cases data/eval_group.json
 ```
 
-## 5. Tự đánh giá
+Run được lưu tại [v3_B_group_openai_20261110T192353230210.json](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json). Harness đo đủ 10 case và không có `provider_error_cases`. Tôi kiểm tra `summary`, từng `results[*].result`, expected/actual tool calls và `tool_results`, sau đó ghi kết quả cùng giới hạn runtime vào B3.
 
-Phần Evaluation đạt đầy đủ yêu cầu cấu trúc CP4: đúng 10 case tự thiết kế, đủ 5 single-turn và 5 multi-turn, mọi case có `expect` và `metadata.what_it_tests`, có case route tới cả `github_search` và `hf_search`, có run `--suite group` hợp lệ và bảng B3 có dẫn chứng.
+## 4. Kết quả
 
-Run cuối có `total_cases=10`, `measured_cases=10`, `provider_error_cases=0`, nên đủ điều kiện dùng làm evidence. Kết quả 7/10 case pass (70%) không phải yêu cầu pass rate tối thiểu của C5; ba case fail được giữ lại vì chúng là bằng chứng thực tế để nhóm cải thiện prompt/tool declaration. Routing đạt 90%, nhưng argument accuracy đạt 70% và multi-turn accuracy đạt 80%, cho thấy bộ case đã phát hiện được các lỗi mà chỉ nhìn câu trả lời cuối sẽ khó nhận ra.
+| Chỉ số | Kết quả |
+|---|---:|
+| Tổng case / case được đo | 10 / 10 |
+| Case đạt | 7/10 (70%) |
+| Tool routing accuracy | 90% |
+| Argument accuracy | 70% |
+| Multi-turn accuracy | 80% (4/5) |
+| Provider error | 0 |
+| Single-turn đạt | 3/5 |
+| Multi-turn đạt | 4/5 |
 
-Giới hạn cần ghi rõ: GitHub API bị HTTP 403 do rate limit, nên tool result của các case GitHub không chứng minh dữ liệu repository hữu ích. Tuy nhiên run vẫn có thể đánh giá hành vi model vì harness đối chiếu tên tool và subset arguments trước khi phụ thuộc vào nội dung API. G02 route đúng `hf_search` nhưng kết quả dataset rỗng; đây là giới hạn dữ liệu/runtime, không tự động được quy thành lỗi routing.
+Ba case chưa đạt cho thấy ba dạng lỗi khác nhau:
 
-Qua nhiệm vụ này, tôi học được cách biến yêu cầu tự nhiên thành testable expectation, thiết kế case để phân biệt lỗi routing với lỗi argument, và dùng run JSON làm bằng chứng thay vì đánh giá bằng cảm nhận. Nếu có vòng tiếp theo, tôi sẽ sửa prompt cho missing query, mô tả rõ `policy_area=tool_usage` trong `tools.yaml`, và bổ sung quy tắc giữ toàn bộ điều kiện mới khi rewrite query multi-turn; sau đó chạy lại group eval để kiểm tra đúng các giả thuyết này.
+| Case | Expected | Actual trong run | Phân tích |
+|---|---|---|---|
+| G04 — thiếu chủ đề | Hỏi lại bằng `clarify` | Gọi `github_search` với query tự đoán `AI research` | Agent tiếp tục theo hướng dẫn đoán khi thiếu thông tin trong prompt hiện hành. Đây là lỗi boundary/missing-info; hướng cải thiện là hỏi chủ đề trước khi tìm. |
+| G05 — policy về rate limit | `policy_area=tool_usage` | Chọn `policy` nhưng đặt `policy_area=all` | Routing đúng, nhưng arguments quá rộng. Nên mô tả rõ trong `tools.yaml` cách ánh xạ rate limit sang vùng `tool_usage`. |
+| G09 — sửa query multi-turn | Query chứa ý “asynchronous web scraping”, language Python | Gọi đúng `github_search` và đặt Python, nhưng query chỉ còn `web scraping` | Agent tiếp nhận phần đổi ngôn ngữ nhưng bỏ mất điều kiện nội dung mới ở lượt sau. Cần giữ đầy đủ các ràng buộc khi viết lại query. |
+
+Run cũng ghi nhận lỗi runtime của GitHub Search API: G01, G03 và G04 trả HTTP 403 do rate limit. G02 gọi đúng `hf_search` và đúng các arguments được chấm, nhưng API trả danh sách rỗng. Vì vậy PASS/FAIL trong summary xác nhận hành vi tool-call theo harness; các trường hợp trên không xác nhận rằng API đã cung cấp dữ liệu hữu ích.
+
+## 5. Kiểm tra cấu hình và giới hạn khi ghi kết quả
+
+Run lưu `prompt_hash=eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68` và `tools_hash=ee32b4055306d7588dc158083f6d07c069ef4f766b0e57a8aeeb3fa8c3403b41`; `artifact_version` là `v3+peb1c8179815b+tee32b4055306`. Nhãn `version` trong run được đặt là `v3`, nhưng khi đối chiếu với dòng v3 trong `starter_v0/artifacts/version_log.csv`, hash prompt/tool của run group này không khớp: version log ghi prompt `c800280bc6ca…` và tools `0f6be0ee4fef…`. Do đó, báo cáo này xem đây là run Group Eval được gọi với nhãn v3 và cấu hình/hashes nêu trên; không dùng nó làm bằng chứng rằng đúng artifacts v3 của CP2 đã được kiểm tra. Cần chạy lại Group Eval khi đúng file prompt và tool v3 được đặt trong checkout để xác nhận ảnh hưởng của v3.
+
+Điểm 70% của bộ group cũng không được so trực tiếp với điểm base: hai run dùng bộ case khác nhau. Group Eval phục vụ đo các case nhóm tự thiết kế, trong khi run base dùng 20 case cố định. Kết quả hữu ích nhất ở đây là các lỗi cụ thể và số đo trong cùng một bộ group khi chạy lại với đúng artifacts.
+
+## 6. Bằng chứng và đóng góp vào repo
+
+| Hạng mục | Bằng chứng |
+|---|---|
+| Bộ case | [eval_group.json](../../starter_v0/data/eval_group.json) |
+| Run Group Eval | [v3_B_group_openai_20261110T192353230210.json](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json) |
+| Kết quả B3 và phân tích lỗi | [group_report.md](group_report.md) |
+| Kiểm tra registry/schema | `python -m pytest tests/test_tool_contract.py -q` — 65 passed sau khi tích hợp `hf_search` |
+| Commit cá nhân trên nhánh nộp | `d067aa9`, `6cb1a4d`, `c1047e4`, `c07d09c`; các thay đổi được merge vào `main` |
+
+Các file trong phạm vi đóng góp của tôi gồm `starter_v0/data/eval_group.json`, run JSON của Group Eval, mục B3 của báo cáo nhóm, `TEAM.md` và báo cáo cá nhân này. Tool implementations của `github_search` và `hf_search` do phần việc Tool Development cung cấp; tôi sử dụng chúng làm đối tượng kiểm tra và không nhận là tác giả implementation.
+
+**Công cụ hỗ trợ và tự kiểm tra:** Tôi dùng Codex để rà yêu cầu rubric, hỗ trợ biên tập case và tổng hợp phần mô tả. Số liệu được lấy từ `run_eval.py` và run JSON do provider thật tạo ra. Tôi đối chiếu số lượng 5+5, ID case, summary, expected/actual tool calls, lỗi API và hash artifacts. Codex không được dùng để tạo run hay metric thay cho kết quả thực tế.
+
+## 7. Tự đánh giá và việc tiếp theo
+
+Phần việc của tôi đã hoàn thành các deliverable cấu trúc của CP4: bộ eval có đúng 10 case theo tỷ lệ 5+5; có case cho cả hai tool mới; run group đo đủ case; B3 liệt kê kết quả và ba lỗi; báo cáo cá nhân ghi MSSV, vai trò, bằng chứng và phần tự đánh giá. Contract test cho registry/schema đạt 65 passed.
+
+Điểm còn cần làm để có đánh giá cuối đáng tin cậy hơn là chạy lại bộ group bằng đúng artifacts v3 đã kiểm chứng qua hash, sau khi chúng được tích hợp vào checkout/nhánh nộp. Nên chạy khi GitHub Search API hết rate limit để quan sát dữ liệu tool thực tế. Các giả thuyết tiếp theo là: hỏi lại khi chủ đề tìm kiếm bị thiếu; mô tả cụ thể `policy_area=tool_usage`; và giữ mọi thuộc tính mới khi sửa query multi-turn. Khi có run mới, cần cập nhật bảng B3 và thay đường dẫn/hash trong báo cáo này.
