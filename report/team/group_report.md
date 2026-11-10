@@ -1,5 +1,11 @@
 # Báo cáo nhóm — Day 03 Research Agent Tool Eval
 
+> Báo cáo gồm 2 phần có hạn khác nhau:
+> - \*\*Phần A (mục 2)\*\* — giới thiệu agent, ngắn gọn 1 trang. \*\*Xong trước Team showdown (16:30)\*\* để team khác hiểu nhanh agent có tool gì, làm được gì. Có thể làm thêm poster `report/team/poster.html` hoặc `poster.svg`.
+> - \*\*Phần B (mục 3–7)\*\* — chi tiết và bằng chứng, dựa trên log thật. Hoàn thiện trước deadline nộp bài.
+>
+> Mỗi bảng phải trỏ được tới file thật: run JSON, transcript, commit. Cách chấm xem \[RUBRIC.md](../../RUBRIC.md).
+
 ## 1\. Thông tin nhóm
 
 * Tên nhóm: Nhóm 12
@@ -11,16 +17,23 @@
 
 ### A1. Agent này làm được gì
 
+> 1–2 câu mô tả agent dùng để làm gì (cho team khác hiểu nhanh).
+
 Research Agent hỗ trợ tra cứu tin tức web, tìm bài đăng Twitter/X theo tài khoản hoặc chủ đề, đọc URL và tổng hợp dữ liệu thành bản tin. Agent dùng clarify khi thiếu dữ liệu và cần người dùng xác nhận trước hành động gửi/đăng ra ngoài.
 
 **Cách chạy UI:**
 
-Từ `starter_v0/`, chạy `.\.venv\Scripts\python.exe -m streamlit run app.py`. `streamlit` đã có trong `requirements.txt`; lần kiểm tra local trả HTTP 200 ở trang chủ và `/_stcore/health`.
+> Lệnh chạy UI (ví dụ `streamlit run app.py`) và dependency đã thêm vào `starter\_v0/requirements.txt`.
 
-**Link dùng thử trên máy chạy UI:** [http://localhost:8501](http://localhost:8501). Nhóm chưa có URL public để người ngoài mạng mở trực tiếp.
+**Link dùng thử (deploy):**
 
+> Dán link public để team khác mở thử ngay. Cách deploy nhanh bằng Cloudflare Tunnel xem README. Nếu deploy Vercel/Streamlit Cloud thì dán link đó.
+>
+> URL:
 
 ### A2. Tool agent có
+
+> Liệt kê các tool agent đang dùng (gồm tool mới nhóm tự thêm). Mỗi tool 1 dòng: tên + làm được gì.
 
 |Tên tool|Làm được gì|Tool mới nhóm thêm?|
 |-|-|-|
@@ -34,10 +47,11 @@ Từ `starter_v0/`, chạy `.\.venv\Scripts\python.exe -m streamlit run app.py`.
 |policy|Tra cứu tài liệu chính sách nội bộ	|Không; bonus có sẵn|
 |papers|Tìm bài báo khoa học	|Không; bonus có sẵn|
 |paper\_text	|Đọc nội dung bài báo arXiv|Không; bonus có sẵn|
-|github_search|Tìm repository công khai trên GitHub, lọc ngôn ngữ và sắp xếp kết quả|Có|
-|hf_search|Tìm model hoặc dataset trên Hugging Face Hub|Có|
+||||
 
 ### A3. Câu hỏi mẫu để thử
+
+> 3–5 câu hỏi/yêu cầu mẫu để team khác tự thử agent ngay.
 
 1. Tin tức hôm nay có gì nổi bật?
 2. Lấy 3 tweet mới nhất của Andrej Karpathy.
@@ -45,11 +59,13 @@ Từ `starter_v0/`, chạy `.\.venv\Scripts\python.exe -m streamlit run app.py`.
 
 ## 3\. Giải pháp
 
+> Tóm tắt các thay đổi chính trong `starter\_v0/artifacts/system\_prompt.md` và `starter\_v0/artifacts/tools.yaml`, và tool mới nhóm viết (tên, làm gì, khi nào agent nên gọi).
+
 * v0 (baseline): Giữ nguyên artifacts/system\_prompt.md và artifacts/tools.yaml, đo 20 case trước khi chỉnh sửa. Kết quả 14/20 (70%).
 * v1 (system prompt): Thay thế các chỉ dẫn starter mâu thuẫn (đoán thiếu thông tin, gọi send thiếu xác nhận, ép dùng một tool) bằng hướng dẫn rõ hơn về hỏi lại, phạm vi, chọn tool và argument. 18/20 (90%). Lưu ý: Phạm vi thay đổi v1 tương đối rộng; cần mô tả trung thực trong version log.
 * v2 (system prompt): Siết quy tắc xác nhận trước gửi/đăng và yêu cầu clarify(response\_type="yes\_no"); đạt 18/20 (90%), chưa xử lý được R12.
 * v3 (tool declaration): Chỉ cập nhật mô tả timeline trong artifacts/tools.yaml, nêu rõ username thực và cách giữ limit qua hội thoại; M03 từ FAIL thành PASS; đạt 19/20 (95%).
-* Tool mới CP3: [`github_search`](../../starter_v0/tools/github_search/tool.py) dùng khi người dùng yêu cầu repository GitHub; [`hf_search`](../../starter_v0/tools/hf_search/tool.py) dùng khi yêu cầu model/dataset trên Hugging Face. Cả hai có `TOOL.md`, đăng ký trong `tools/__init__.py`, khai báo trong `artifacts/tools.yaml` và unit test offline.
+* Tool mới CP3:
 
 ## 4\. Kết quả — PHẦN B: Chi tiết và bằng chứng
 
@@ -59,12 +75,10 @@ Lấy từ `starter\_v0/artifacts/version\_log.csv` và `starter\_v0/runs/\*.jso
 
 |Version|Changed Artifact|Hypothesis|Metric Before|Metric After|Run File|
 |-|-|-|-:|-:|-|
-|v0|baseline|Đo hiệu năng starter|N/A|70% (14/20)|[run v0](../../starter_v0/runs/v0_B_base_openai_20261110T174151802162.json)|
-|v1|artifacts/system_prompt.md|Quy tắc nghiên cứu rõ hơn sẽ giảm đoán sai/định tuyến sai|70%|90% (18/20)|[run v1](../../starter_v0/runs/v1_B_base_openai_20261110T175822514538.json)|
-|v2|artifacts/system_prompt.md|Quy tắc yes/no giảm lỗi xác nhận khi gửi|90%|90% (18/20)|[run v2](../../starter_v0/runs/v2_B_base_openai_20261110T180448519846.json)|
-|v3|artifacts/tools.yaml (timeline)|Mô tả handle rõ hơn giảm lỗi screenname|90%|95% (19/20)|[run v3](../../starter_v0/runs/v3_B_base_openai_20261110T181231483180.json)|
-
-B1 dùng chuỗi run v0–v3 của Hoàng Minh. `version_log.csv` còn ghi chuỗi đánh giá độc lập trên artifact hash khác của Nguyễn Quốc Quang Anh; hai chuỗi không được gộp metric.
+|v0|baseline|Đo hiệu năng starter	|N/A	|70% (14/20)||
+|v1|artifacts/system\_prompt.md	|Quy tắc nghiên cứu rõ hơn sẽ giảm đoán sai/định tuyến sai|70%	|90% (18/20)||
+|v2|artifacts/system\_prompt.md	|Quy tắc yes/no giảm lỗi xác nhận khi gửi	|90%	|90% (18/20)||
+|v3|artifacts/tools.yaml (timeline)|Mô tả handle rõ hơn giảm lỗi screenname|90%	|95% (19/20)||
 
 ### B2. Failure Analysis
 
@@ -78,6 +92,8 @@ Lấy từ `results\[\*].result.failures` trong run JSON.
 |R12\_confirm\_before\_send	|wrong\_boundary|send(text="Bản tin này")|Chưa xác nhận trước hành động gửi	|v1–v3 không gọi send nhưng hỏi clarify(text) thay vì expected clarify(yes\_no) (vẫn FAIL)|
 |R13\_parallel\_web\_and\_tweets|wrong\_tool (nhãn failure\_type)|lookup(query="AI news", timeframe="day") + social\_search(query="AI")|Tool đúng nhưng lookup thiếu topic="news", query sai; observed\_mismatch=wrong\_arg\_value	|v1–v3: query/topic đúng (PASS)|
 |R14\_out\_of\_scope\_coding	|out\_of\_scope|send|Yêu cầu Python ngoài phạm vi nhưng gọi tool gửi	|v1–v3: không gọi tool (PASS theo evaluator)|
+
+### 
 
 Lỗi phát sinh/tồn tại sau v1: M03\_correction\_handle ở v1/v2 gọi timeline(screenname="andrejkarpathy", limit=3) thay vì karpathy. Sau cập nhật mô tả timeline tại v3, M03 PASS: screenname="karpathy", limit=3. 
 
@@ -130,13 +146,11 @@ Lấy từ [v3_openai_20261110T194827688215.transcript.json](../../starter_v0/tr
 |3|Ý mình là của Andrej Karpathy nhé.|`timeline(screenname="karpathy", limit=3)`|`v3+pf0c107a9d7a1+t1830714609c2`|Bổ sung thông tin ở lượt sau: agent giữ đúng ngữ cảnh `limit=3` từ lượt 2 và ánh xạ chính xác tên Andrej Karpathy sang handle `karpathy`; RapidAPI trả HTTP 403.|
 |4|Gửi danh sách 3 model Qwen2.5 ở trên lên Telegram giúp mình.|Round 1: `send(text="...")` (`needs_confirmation`) → Round 2: `send(text="...", confirmed=true)`|`v3+pf0c107a9d7a1+t1830714609c2`|Ở round 1, guardrail của code tool `send` chặn lại (`status="needs_confirmation"`). Tuy nhiên do prompt starter khuyên gửi ngay, ở round 2 model tự truyền `confirmed=true` thay vì gọi `clarify(response_type="yes_no")` hỏi người dùng trước (tool dừng ở kiểm tra biến môi trường `TELEGRAM_BOT_TOKEN`).|
 
-[Phiên chat bổ sung 6 lượt trên OpenAI](../../starter_v0/transcripts/v3-live-evidence_openai_20261110T223250499529.transcript.json) có tra paper, hỏi URL khi thiếu dữ liệu và gọi `clarify(response_type=yes_no)` trước yêu cầu gửi Telegram; người dùng từ chối nên không có lần gửi thật. Phiên này cũng cho thấy sau nhiều kết quả paper, agent tìm lại thay vì hỏi rõ paper cần tóm tắt.
-
 ### B5a. Required Evidence — Tool mới, unit test, UI
 
 |Item|Evidence File|What Worked|Risk / Guardrail|
 |-|-|-|-|
-|Tool mới (`tools/<tên>/`)|[`github_search`](../../starter_v0/tools/github_search/tool.py), [`hf_search`](../../starter_v0/tools/hf_search/tool.py); đăng ký trong [`tools/__init__.py`](../../starter_v0/tools/__init__.py) và khai báo trong `artifacts/tools.yaml`|Bổ sung tìm repository GitHub và model/dataset Hugging Face; chuẩn hóa kết quả về `title`, `url`, `source`, `summary` cùng metadata riêng của từng nguồn. Eval nhóm có case dùng cả hai tool (G01–G03, G06–G10); run có 10/10 case được đo.|Run group ban đầu có HTTP 403 ở 3/7 lần gọi GitHub Search (G01, G03, G04); 4 lần còn lại không ghi lỗi HTTP trong `tool_results`. Điểm PASS chỉ xác nhận routing/arguments.|
+|Tool mới (`tools/<tên>/`)|[`github_search`](../../starter_v0/tools/github_search/tool.py), [`hf_search`](../../starter_v0/tools/hf_search/tool.py); đăng ký trong [`tools/__init__.py`](../../starter_v0/tools/__init__.py) và khai báo trong `artifacts/tools.yaml`|Bổ sung tìm repository GitHub và model/dataset Hugging Face; chuẩn hóa kết quả về `title`, `url`, `source`, `summary` cùng metadata riêng của từng nguồn. Eval nhóm có case dùng cả hai tool (G01–G03, G06–G10); run có 10/10 case được đo.|GitHub Search API bị HTTP 403 rate limit trong cả 7 lần gọi ở run nhóm; kết quả PASS của eval chỉ xác nhận routing/arguments, không đảm bảo API trả dữ liệu. Có thể cấu hình `GITHUB_TOKEN`/`HF_TOKEN`; lỗi API được trả về dưới dạng error dict.|
 |Unit test tool mới (≥ 3 test/tool)|[`tests/test_tools_todo.py`](../../starter_v0/tests/test_tools_todo.py); `pytest -q` từ `starter_v0/` → **93 passed, 0 failed, 0 skipped**|Đã viết **7 test** cho hai tool mới: 4 cho `github_search` và 3 cho `hf_search`, bao gồm request/response mapping, input không hợp lệ, lỗi HTTP/timeout. Test dùng HTTP giả lập, không cần gọi API thật.|Eval không kiểm tra phần triển khai HTTP hay chuẩn hóa payload. Ví dụ, nếu `github_search` lấy sai `html_url`/`full_name` từ payload thì unit test `test_github_search_sends_expected_request_and_maps_repos` bắt được, trong khi eval chỉ chấm tool và arguments do model chọn.|
 |UI (lệnh chạy + link dùng thử)|Chạy từ `starter_v0/`: `streamlit run app.py`; local: [http://localhost:8501](http://localhost:8501)|App Streamlit cho phép chọn provider/model, nhãn phiên bản, chat và xem tool events.|Đây là link local, chỉ truy cập được khi app đang chạy trên máy người dùng; chưa có link deploy/public để báo cáo. Cần cấu hình API key phù hợp trong `.env` hoặc qua UI.|
 
@@ -144,7 +158,7 @@ Lấy từ [v3_openai_20261110T194827688215.transcript.json](../../starter_v0/tr
 
 ### B5. Bonus Evidence
 
-Bonus ghi riêng theo [RUBRIC.md](../../RUBRIC.md); các tool có sẵn (`send`, `policy`, `papers`, `paper_text`) không được tính là tool mới.
+Chỉ điền nếu nhóm làm bonus (ghi riêng, tối đa 10 điểm). Tool có sẵn (`send`, `policy`, `papers`, `paper\_text`) không tự được bonus.
 
 |Bonus|Evidence File|What Worked|Risk / Guardrail|
 |-|-|-|-|
@@ -188,9 +202,9 @@ Người thực hiện: **Phạm Trấn Quốc**. Tất cả full run dưới đ
 
 ## 5\. Khó khăn và cách xử lý
 
-* [Run group ban đầu](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json) ghi HTTP 403 ở 3/7 lần gọi GitHub Search (G01, G03, G04). Nhóm tách lỗi API tool khỏi `provider_error_cases` và chỉ dùng metric để kết luận về routing/arguments.
-* `llama3.2:3b` treo ở R12 trong hai lần full eval. Nhóm dừng an toàn, chỉ lưu [subset chẩn đoán](../../starter_v0/runs/diag-llama3b-subset_B_base_ollama_20261110T222756967652.json) và dùng Qwen 7B/3B làm hai baseline local đầy đủ.
-* UI Streamlit đã chạy và kiểm tra trên `localhost:8501`; chưa có URL public nên phần demo từ ngoài máy chạy còn thiếu.
+> Khó khăn chính và cách nhóm xử lý. Nếu gặp lỗi kỹ thuật (provider lỗi, hết quota API, tool không chạy), mô tả lỗi và dẫn bằng chứng: run JSON, log, ảnh chụp.
+
+* 
 
 ## 6\. Tổng hợp đóng góp
 
@@ -198,12 +212,11 @@ Chi tiết đóng góp của từng thành viên nằm trong [TEAM.md](../../TEA
 
 ## 7\. Hạn chế và hướng cải thiện — B6. Reflection
 
-* **System prompt:** v1 thay các hướng dẫn đoán thông tin, tự gửi và ép một tool bằng quy tắc hỏi lại, chọn tool và xác nhận; v2 siết yêu cầu yes/no trước gửi. Sau [run group 7/10](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json), prompt được bổ sung `clarify(response_type=text)` cho thiếu chủ đề, `policy_area=tool_usage` cho rate limit và giữ ý mới trong query multi-turn; [run group cuối](../../starter_v0/runs/group-quoc-main-sync_B_group_openai_20261110T195411233028.json) đạt 10/10. Bản prompt riêng v4-local nâng Qwen 7B từ 45% lên 60% trên base.
-* **Tool declarations:** v3 làm rõ handle và limit của `timeline`, giúp M03 từ FAIL sang PASS trong chuỗi B1. `tools_local.yaml` ở v5 rút mô tả và làm rõ điều kiện gọi tool, nhưng Qwen 7B giảm 60% xuống 55%; không dùng kết quả này để tuyên bố mô tả ngắn luôn tốt hơn.
-* **Cần review thủ công:** R12 trong base vẫn không đạt về loại xác nhận; [transcript live](../../starter_v0/transcripts/v3_openai_20261110T194827688215.transcript.json) có lượt agent tự truyền `confirmed=true` khi người dùng chưa xác nhận, dù tool không gửi được do thiếu token. Ngoài ra, tool-call accuracy không đo chất lượng nội dung API trả về hoặc câu trả lời cuối.
-* **Vòng tiếp theo:** thêm regression eval cho thứ tự `clarify(yes_no)` → người dùng xác nhận → `send`, và nhiều lượt chạy lặp cho các case khó. So sánh trên một bộ case mới để kiểm tra liệu cải thiện 10/10 của Group Eval có giữ được ngoài bộ đã dùng để sửa prompt.
+* Fix nào thuộc `system\_prompt.md`?
+* Fix nào thuộc `tools.yaml`?
+* Failure nào cần review thủ công thay vì chấm tự động?
+* Nếu có thêm một vòng, nhóm sẽ thử giả thuyết nào?
 
 ## 8\. Tài liệu tham khảo
 
-* [README.md](../../README.md), [CHECKPOINTS.md](../../CHECKPOINTS.md), [RUBRIC.md](../../RUBRIC.md), [SUBMISSION.md](../../SUBMISSION.md).
-* [version_log.csv](../../starter_v0/artifacts/version_log.csv), các [run JSON](../../starter_v0/runs/) và [báo cáo cá nhân của Phạm Trấn Quốc](2A202604113_PhamTranQuoc.md).
+* 
