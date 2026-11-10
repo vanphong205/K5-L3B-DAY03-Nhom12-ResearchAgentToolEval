@@ -1,0 +1,42 @@
+# Báo cáo cá nhân — Phạm Trấn Quốc (2A202604113)
+
+## 1. Thông tin thành viên
+
+- Họ tên: Phạm Trấn Quốc
+- MSSV: 2A202604113
+- Email: chưa cung cấp
+- Vai trò: Evaluation
+
+## 2. Phần việc phụ trách
+
+Thiết kế bộ Group Eval gồm 10 case mới (5 single turn, 5 multi turn), chạy eval với model thật, đọc run JSON để xác định lỗi chọn tool và truyền arguments, rồi đưa kết quả vào mục B3 của báo cáo nhóm. Bộ case được viết trong [eval_group.json](../../starter_v0/data/eval_group.json) và kiểm tra cả hai tool mới `github_search`, `hf_search` cùng các tình huống dễ nhầm với `papers` và `policy`.
+
+## 3. Đóng góp cụ thể
+
+1. Rà `README.md`, `CHECKPOINTS.md`, `RUBRIC.md`, `SUBMISSION.md`, mẫu `group_report.md`, danh sách tool và schema của `run_eval.py` để xác định đúng yêu cầu CP4.
+2. Viết 10 case `G01`–`G10`, mỗi case có `phase=B`, `failure_type`, `expect`, `metadata.what_it_tests`. Năm case đầu dùng `query`; năm case sau dùng `turns`. G02 kiểm tra dataset trên Hugging Face, G10 kiểm tra gọi cùng lúc `github_search` và `hf_search`.
+3. Điều chỉnh G03 để chỉ đo routing, vì phép so chuỗi query nguyên văn có thể báo sai với truy vấn cùng nghĩa. Sau khi `hf_search` được tích hợp từ `main`, đổi G02 và G10 để phủ cả hai tool mới. Đổi G05 sang câu hỏi về quy định rate limit vì case API key ban đầu quá giống bộ extension. Các thay đổi này được thực hiện trước run chính.
+4. Chạy Group Eval bằng OpenAI `gpt-4o-mini`, nhãn `v0-group-quoc-two-tools`. Run chính đo đủ 10/10 case, 0 provider error, đạt 7/10 case; routing 90%, arguments 70%, multi turn 80%.
+5. Đọc `actual_tool_calls`, `failures`, `observed_mismatch` và `tool_results` để phân tích ba case FAIL (G04, G05, G09). GitHub Search API trả 403 rate limit ở cả 7 lần gọi GitHub trong run chính, nên tách lỗi thực thi tool khỏi lỗi chọn tool/arguments của model.
+6. Điền bảng B3 và phần phân tích expected/actual của ba case chưa đạt trong [báo cáo nhóm](group_report.md).
+
+## 4. Bằng chứng
+
+| Hạng mục | File / kết quả |
+|---|---|
+| Bộ Group Eval | [eval_group.json](../../starter_v0/data/eval_group.json) |
+| Run chính | [v0-group-quoc-two-tools_B_group_openai_20261110T184823307765.json](../../starter_v0/runs/v0-group-quoc-two-tools_B_group_openai_20261110T184823307765.json) |
+| Bảng B3, phân tích lỗi và giới hạn | [group_report.md](group_report.md) |
+| Kiểm tra contract | `python -m pytest tests/test_tool_contract.py -q` → 65 passed sau khi tích hợp `hf_search` |
+
+**AI/công cụ đã dùng:** Codex hỗ trợ rà yêu cầu, soạn case và tổng hợp báo cáo; Python `run_eval.py` gọi provider OpenAI và ghi run JSON thật. Tôi kiểm tra lại số lượng 5 single + 5 multi, `summary` và từng `results[*].result` trong run, đối chiếu expected/actual với file case. Không dùng AI để tạo số liệu hoặc run giả.
+
+**Lệnh tái hiện:** chạy từ `starter_v0/` sau khi cấu hình `.env` và cài `requirements.txt`:
+
+```powershell
+python run_eval.py --provider openai --version v0-group-quoc-two-tools --suite group --eval-cases data/eval_group.json
+```
+
+## 5. Tự đánh giá
+
+Phần Evaluation đạt yêu cầu cấu trúc CP4: đúng 10 case mới, đủ 5 single + 5 multi, có case cho cả hai tool mới, run đủ 10/10 không gặp provider error, bảng B3 có dẫn chứng. Ba case FAIL là kết quả thực tế để nhóm cải thiện prompt/tool declaration. Run hiện dùng prompt v0 với bộ tool mới; cần chạy lại cùng bộ case trên v3 khi nhóm hoàn tất tối ưu. GitHub rate limit làm cả 7 lần gọi GitHub không lấy được dữ liệu repo dù harness vẫn đo được routing/arguments; G02 gọi đúng `hf_search` nhưng trả danh sách rỗng. Không so trực tiếp 70% group với baseline trên main vì khác bộ case và hash artifacts.

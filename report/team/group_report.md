@@ -79,9 +79,30 @@ Lấy từ `results[*].result.failures` trong run JSON.
 
 Liệt kê đúng 10 case trong `starter_v0/data/eval_group.json` (5 single turn + 5 multi turn).
 
+Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](../../starter_v0/data/eval_group.json). Chạy bằng `python run_eval.py --provider openai --version v0-group-quoc-two-tools --suite group --eval-cases data/eval_group.json` trên `gpt-4o-mini`, với cả `github_search` và `hf_search` đã được đăng ký. [Run JSON](../../starter_v0/runs/v0-group-quoc-two-tools_B_group_openai_20261110T184823307765.json) có 10/10 case được đo, 0 provider error; 7/10 case đạt (70%), routing 90%, arguments 70%, multi turn 80%.
+
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
-|  |  |  |  |
+| G01 (single) | Repo Python về RAG; language, sort, limit | `github_search` (`python`, `stars`, 3) | PASS |
+| G02 (single) | Dataset tiếng Việt trên Hugging Face; sort theo cập nhật | `hf_search` (`datasets`, `lastModified`, 4) | PASS |
+| G03 (single) | Phân biệt repository với paper và web | `github_search` | PASS |
+| G04 (single) | Thiếu chủ đề tìm repo thì hỏi lại | `clarify` (`response_type=text`) | FAIL: đoán `AI research` và gọi `github_search` |
+| G05 (single) | Tra policy nội bộ về API miễn phí bị rate limit | `policy` (`policy_area=tool_usage`) | FAIL: dùng `policy_area=all` |
+| G06 (multi) | Giữ chủ đề cũ, lấy language và limit ở lượt mới | `github_search` (vector database, `python`, `stars`, 4) | PASS |
+| G07 (multi) | Ưu tiên yêu cầu sửa sort và limit mới nhất | `github_search` (agent framework, `python`, `updated`, 2) | PASS |
+| G08 (multi) | Chuyển từ tìm repo sang paper arXiv | `papers` | PASS |
+| G09 (multi) | Sửa language và chủ đề thành scraping bất đồng bộ | `github_search` (`asynchronous web scraping`, `python`) | FAIL: query bỏ mất “bất đồng bộ” |
+| G10 (multi) | Giữ yêu cầu tìm repo và thêm model Hugging Face | `github_search` + `hf_search` | PASS |
+
+**Phân tích ba case FAIL** (đọc từ `results[*].result` trong run JSON):
+
+| Case | Expected | Actual | Nguyên nhân và hướng xử lý |
+|---|---|---|---|
+| G04 | `clarify(response_type=text)` | `github_search(query="AI research")` | Agent đoán chủ đề khi người dùng chưa nêu. Prompt v0 đang khuyến khích đoán; cần yêu cầu hỏi lại khi thiếu chủ đề tìm kiếm. |
+| G05 | `policy(policy_area="tool_usage")` | `policy(query="API nghiên cứu miễn phí bị rate limit", policy_area="all")` | Chọn đúng tool nhưng dùng vùng chung; cần mô tả rõ quy định rate limit thuộc `tool_usage` trong `tools.yaml`. |
+| G09 | `github_search(query="asynchronous web scraping", language="python")` | `github_search(query="web scraping", language="python")` | Đổi đúng ngôn ngữ nhưng bỏ điều kiện “bất đồng bộ” ở lượt mới; cần giữ mọi điều kiện mới khi viết lại query. |
+
+**Cách chấm và giới hạn:** Harness chấm tên tool và tập con arguments ghi trong `expect`; G03 chỉ đo routing để tránh ép một cách viết query duy nhất. GitHub API trả HTTP 403 do rate limit ở cả 7 lần gọi GitHub (G01, G03, G04, G06, G07, G09, G10); G02 gọi đúng `hf_search` nhưng kết quả dataset rỗng. Điểm PASS xác nhận lựa chọn tool/arguments theo harness, không xác nhận đã lấy được nội dung hữu ích từ API. Run này dùng prompt v0 với bộ tool đã mở rộng; `artifact_version=v0-group-quoc-two-tools+peb1c8179815b+tee32b4055306`. Run base trên main dùng bộ 20 case khác và hash prompt/tool khác, nên không so trực tiếp 70% group với điểm base hoặc coi đây là số đo v3.
 
 ### B4. Live Chat Evidence
 
