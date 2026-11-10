@@ -79,9 +79,22 @@ Lấy từ `results[*].result.failures` trong run JSON.
 
 Liệt kê đúng 10 case trong `starter_v0/data/eval_group.json` (5 single turn + 5 multi turn).
 
+Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](../../starter_v0/data/eval_group.json). Chạy bằng `python run_eval.py --provider openai --version v0-group-quoc --suite group --eval-cases data/eval_group.json` trên `gpt-4o-mini`. [Run JSON](../../starter_v0/runs/v0-group-quoc_B_group_openai_20261110T183156015784.json) có 10/10 case được đo, 0 provider error; 7/10 case đạt (70%), routing 90%, arguments 70%, multi turn 80%.
+
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
-|  |  |  |  |
+| G01 (single) | Repo Python về RAG; language, sort, limit | `github_search` (`python`, `stars`, 3) | PASS |
+| G02 (single) | Repo TypeScript về MCP; sort theo cập nhật | `github_search` (`typescript`, `updated`, 5) | PASS |
+| G03 (single) | Phân biệt repository với paper và web | `github_search` | PASS |
+| G04 (single) | Thiếu chủ đề tìm repo thì hỏi lại | `clarify` (`response_type=text`) | FAIL: đoán `machine learning` và gọi `github_search` |
+| G05 (single) | Tra policy về API key với đúng vùng dữ liệu nhạy cảm | `policy` (`policy_area=data_privacy`) | FAIL: dùng `policy_area=all` |
+| G06 (multi) | Giữ chủ đề cũ, lấy language và limit ở lượt mới | `github_search` (vector database, `python`, `stars`, 4) | PASS |
+| G07 (multi) | Ưu tiên yêu cầu sửa sort và limit mới nhất | `github_search` (agent framework, `python`, `updated`, 2) | PASS |
+| G08 (multi) | Chuyển từ tìm repo sang paper arXiv | `papers` | PASS |
+| G09 (multi) | Sửa language và chủ đề thành scraping bất đồng bộ | `github_search` (`asynchronous web scraping`, `python`) | FAIL: query bỏ mất “bất đồng bộ” |
+| G10 (multi) | Giữ yêu cầu tìm repo và thêm paper cùng chủ đề | `github_search` + `papers` | PASS |
+
+Chi tiết expected/actual và nguyên nhân ba lỗi nằm trong [phân tích Group Eval](../../starter_v0/analysis/group_eval_v0.md). GitHub API trả HTTP 403 do rate limit ở G07, G09 và G10; điểm PASS/FAIL ở đây chấm lựa chọn tool và arguments, không xác nhận nội dung API đã lấy thành công. Run này dùng prompt v0, nên chưa phản ánh hiệu quả các vòng tối ưu v1–v3.
 
 ### B4. Live Chat Evidence
 

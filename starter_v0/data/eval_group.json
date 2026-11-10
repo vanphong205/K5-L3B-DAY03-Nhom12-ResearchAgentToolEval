@@ -1,7 +1,118 @@
 {
   "dataset_id": "day03_v2_research_group",
   "dataset_role": "group",
-  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "description": "Bộ eval nhóm của Phạm Trấn Quốc: 5 single turn và 5 multi turn, tập trung vào GitHub repository search, arguments, hỏi lại và phân biệt với paper và policy.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_github_python_rag_repositories",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm giúp mình 3 repository Python nổi bật về RAG trên GitHub, ưu tiên nhiều sao.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "github_search", "args": {"query": "RAG", "language": "python", "sort": "stars", "max_results": 3}}]},
+      "metadata": {"difficulty": "medium", "what_it_tests": "Route tìm project code sang github_search và trích đúng ngôn ngữ, số lượng, sort."}
+    },
+    {
+      "id": "G02_github_typescript_mcp",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm trên GitHub các repo TypeScript về Model Context Protocol, sắp xếp theo cập nhật gần đây và lấy tối đa 5 kết quả.",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "github_search", "args": {"query": "Model Context Protocol", "language": "typescript", "sort": "updated", "max_results": 5}}]},
+      "metadata": {"difficulty": "medium", "what_it_tests": "Trích query, language, updated sort và giới hạn kết quả cho tìm kiếm GitHub."}
+    },
+    {
+      "id": "G03_github_vs_web_search",
+      "phase": "B",
+      "suite": "group",
+      "query": "Cho mình tìm repository trên GitHub về benchmark đánh giá LLM agent, đừng tìm bài báo khoa học.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "github_search", "args": {}}]},
+      "metadata": {"difficulty": "medium", "what_it_tests": "Phân biệt yêu cầu tìm repository mã nguồn với papers/arXiv hoặc lookup web."}
+    },
+    {
+      "id": "G04_github_missing_query",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm giúp mình một repository phù hợp trên GitHub.",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"difficulty": "medium", "what_it_tests": "Thiếu chủ đề tìm kiếm thì hỏi lại thay vì gọi github_search với query rỗng hoặc đoán chủ đề."}
+    },
+    {
+      "id": "G05_company_policy_not_github",
+      "phase": "B",
+      "suite": "group",
+      "query": "Theo policy công ty, có được đưa API key vào prompt của model không?",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "data_privacy"}}]},
+      "metadata": {"difficulty": "medium", "what_it_tests": "Yêu cầu hỏi policy nội bộ phải route tới policy với policy_area=data_privacy, không dùng vùng all hoặc tìm web."}
+    },
+    {
+      "id": "G06_multiturn_github_language_and_limit",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tìm repository GitHub về vector database."},
+        {"role": "assistant", "content": "Bạn muốn lọc theo ngôn ngữ lập trình nào?"},
+        {"role": "user", "content": "Python nhé, lấy 4 repo nhiều sao nhất."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "github_search", "args": {"query": "vector database", "language": "python", "sort": "stars", "max_results": 4}}]},
+      "metadata": {"difficulty": "hard", "what_it_tests": "Dùng chủ đề ở lượt trước và lấy language/limit/sort từ lượt mới nhất."}
+    },
+    {
+      "id": "G07_multiturn_change_github_sort",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tìm repository Python về agent framework trên GitHub, sắp theo stars."},
+        {"role": "assistant", "content": "Mình sẽ tìm các repository phù hợp."},
+        {"role": "user", "content": "Đổi lại, ưu tiên repo mới được cập nhật gần đây nhất và chỉ lấy 2."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "github_search", "args": {"query": "agent framework", "language": "python", "sort": "updated", "max_results": 2}}]},
+      "metadata": {"difficulty": "hard", "what_it_tests": "Áp dụng chỉnh sửa ở lượt sau cho sort và số lượng, giữ lại query/language từ ngữ cảnh."}
+    },
+    {
+      "id": "G08_multiturn_github_to_papers_switch",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tìm repository trên GitHub về retrieval augmented generation."},
+        {"role": "assistant", "content": "Mình có thể tìm các project mã nguồn."},
+        {"role": "user", "content": "Thay vào đó, tìm paper arXiv về RAG evaluation."}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "papers", "args": {"query": "RAG evaluation"}}]},
+      "metadata": {"difficulty": "hard", "what_it_tests": "Đổi ý từ tìm repository sang tìm paper phải chuyển github_search sang papers."}
+    },
+    {
+      "id": "G09_multiturn_github_query_correction",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tìm repository JavaScript về web scraping trên GitHub."},
+        {"role": "assistant", "content": "Mình sẽ tìm repository JavaScript."},
+        {"role": "user", "content": "Sửa thành Python và tập trung vào scraping bất đồng bộ."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "github_search", "args": {"query": "asynchronous web scraping", "language": "python"}}]},
+      "metadata": {"difficulty": "hard", "what_it_tests": "Ưu tiên sửa đổi mới nhất của query và language, không giữ lại JavaScript hoặc query cũ."}
+    },
+    {
+      "id": "G10_multiturn_github_and_papers",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tìm một repository GitHub về prompt injection testing."},
+        {"role": "assistant", "content": "Mình có thể tìm repo công khai."},
+        {"role": "user", "content": "Tìm thêm paper arXiv cùng chủ đề; lần này cho cả repo và paper."}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "github_search", "args": {}}, {"name": "papers", "args": {}}]},
+      "metadata": {"difficulty": "hard", "what_it_tests": "Lượt mới nhất yêu cầu hai nguồn, nên gọi cả github_search và papers; không bỏ yêu cầu repo ở lượt đầu."}
+    }
+  ]
 }
