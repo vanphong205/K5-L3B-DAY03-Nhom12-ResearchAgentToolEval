@@ -85,6 +85,7 @@ Sao chép mục dưới đây cho từng thành viên.
   * Chạy baseline Group Eval với OpenAI `gpt-4o-mini` (7/10, 70%), đọc expected/actual để phân tích lỗi G04, G05, G09; ghi nhận riêng GitHub API rate limit và không quy lỗi API thành lỗi provider.
   * Cải thiện `starter_v0/artifacts/system_prompt.md`: yêu cầu hỏi lại bằng `clarify(response_type="text")` khi thiếu chủ đề; đặt `policy_area="tool_usage"` rõ ràng cho vấn đề API/tool; giữ khái niệm mới khi sửa query multi-turn. Chạy hai lượt xác nhận, lưu JSON riêng; lượt cuối đạt 10/10, routing/argument/multi-turn đều 100%, provider error 0.
   * Cập nhật mục B3 trong `report/team/group_report.md` và báo cáo cá nhân gồm baseline, lần thử trung gian, run xác nhận, phân tích lỗi, hash/artifact version và giới hạn diễn giải. Không thay đổi dataset hoặc expected để tác động kết quả.
+  * Thực hiện bonus B7: chạy hai baseline Ollama (`qwen2.5:7b`, `qwen2.5:3b`) đủ 20 case, thử v4-local/v5-local trên Qwen 7B và kiểm tra ngược trên OpenAI. Ghi metric, run và giới hạn Llama 3B trong `version_log.csv`, B7 báo cáo nhóm và báo cáo cá nhân.
 
 ### Bằng chứng
 
@@ -95,6 +96,7 @@ Sao chép mục dưới đây cho từng thành viên.
   * `starter_v0/artifacts/system_prompt.md` (quy tắc cải thiện cho Group Eval)
 * `report/team/group_report.md` (mục B3)
 * `report/team/2A202604113_PhamTranQuoc.md`
+* B7: `starter_v0/runs/v3-qwen7b_B_base_ollama_20261110T220201663566.json`, `starter_v0/runs/v3-qwen3b_B_base_ollama_20261110T223709953462.json`, `starter_v0/runs/v4-local_B_base_ollama_20261110T223020856578.json`, `starter_v0/runs/v5-local_B_base_ollama_20261110T223226373182.json`, `starter_v0/runs/cloud-v5-local_B_base_openai_20261110T223343542041.json`.
 
 ## TRẦN ANH DŨNG - 2A202604037
 
