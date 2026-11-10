@@ -1,7 +1,7 @@
 {
-  "run_id": "v0-group-quoc-two-tools_B_group_openai_20261110T184823307765",
-  "version": "v0-group-quoc-two-tools",
-  "artifact_version": "v0-group-quoc-two-tools+peb1c8179815b+tee32b4055306",
+  "run_id": "v3_B_group_openai_20261110T192353230210",
+  "version": "v3",
+  "artifact_version": "v3+peb1c8179815b+tee32b4055306",
   "prompt_hash": "eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68",
   "tools_hash": "ee32b4055306d7588dc158083f6d07c069ef4f766b0e57a8aeeb3fa8c3403b41",
   "phase": "B",
@@ -14,7 +14,7 @@
   "dataset_id": "day03_v2_research_group",
   "dataset_role": "group",
   "description": "Bộ eval nhóm của Phạm Trấn Quốc: 5 single turn và 5 multi turn, đo cả github_search và hf_search cùng các tình huống phân biệt paper, policy, thiếu thông tin và sửa yêu cầu.",
-  "generated_at": "2026-11-10T18:48:23",
+  "generated_at": "2026-11-10T19:23:53",
   "summary": {
     "total_cases": 10,
     "measured_cases": 10,
@@ -461,8 +461,48 @@
           },
           "result": {
             "tool": "github_search",
-            "error": "HTTPError",
-            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=vector+database+language%3Apython&per_page=4&sort=stars&order=desc"
+            "query": "vector database",
+            "language": "python",
+            "sort": "stars",
+            "total_count": 6801,
+            "items": [
+              {
+                "title": "pathwaycom/serviette",
+                "url": "https://github.com/pathwaycom/serviette",
+                "source": "github.com",
+                "summary": "A no-code RAG server that keeps answers in sync with your documents. Works with 8 vector databases. Built on Pathway.",
+                "stars": 58721,
+                "language": "Python",
+                "updated_at": "2026-11-10T10:12:12Z"
+              },
+              {
+                "title": "rocketride-org/rocketride-server",
+                "url": "https://github.com/rocketride-org/rocketride-server",
+                "source": "github.com",
+                "summary": "High-performance AI pipeline engine with a C++ core and 50+ Python-extensible nodes. Build, debug, and scale LLM workflows with 13+ model providers, 8+ vector databases, and agent orchestration, all from your IDE. Includes VS Code extension, TypeScript/Python SDKs, and Docker deployment.",
+                "stars": 20067,
+                "language": "Python",
+                "updated_at": "2026-11-10T12:06:09Z"
+              },
+              {
+                "title": "GanymedeNil/document.ai",
+                "url": "https://github.com/GanymedeNil/document.ai",
+                "source": "github.com",
+                "summary": "基于向量数据库与GPT3.5的通用本地知识库方案(A universal local knowledge base solution based on vector database and GPT3.5)",
+                "stars": 3661,
+                "language": "Python",
+                "updated_at": "2026-11-06T15:52:36Z"
+              },
+              {
+                "title": "hegelai/prompttools",
+                "url": "https://github.com/hegelai/prompttools",
+                "source": "github.com",
+                "summary": "Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).",
+                "stars": 3061,
+                "language": "Python",
+                "updated_at": "2026-11-09T05:56:02Z"
+              }
+            ]
           }
         }
       ]
@@ -536,8 +576,30 @@
           },
           "result": {
             "tool": "github_search",
-            "error": "HTTPError",
-            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=agent+framework+language%3Apython&per_page=2&sort=updated&order=desc"
+            "query": "agent framework",
+            "language": "python",
+            "sort": "updated",
+            "total_count": 21689,
+            "items": [
+              {
+                "title": "marunsct/AgentCanvas",
+                "url": "https://github.com/marunsct/AgentCanvas",
+                "source": "github.com",
+                "summary": "Low Code Agen Development Canvas for any Agentic Framework",
+                "stars": 0,
+                "language": "Python",
+                "updated_at": "2026-11-10T12:21:36Z"
+              },
+              {
+                "title": "nestor-home/nestor",
+                "url": "https://github.com/nestor-home/nestor",
+                "source": "github.com",
+                "summary": "Open-source framework for home assistants: a fast voice agent wired to Home Assistant, with memory, delegation of long tasks, initiative, and any body you give it, from a speaker to a robot.",
+                "stars": 1,
+                "language": "Python",
+                "updated_at": "2026-11-10T12:21:25Z"
+              }
+            ]
           }
         }
       ]
@@ -793,8 +855,57 @@
           },
           "result": {
             "tool": "github_search",
-            "error": "HTTPError",
-            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=web+scraping+language%3Apython&per_page=5&sort=stars&order=desc"
+            "query": "web scraping",
+            "language": "python",
+            "sort": "stars",
+            "total_count": 58765,
+            "items": [
+              {
+                "title": "D4Vinci/Scrapling",
+                "url": "https://github.com/D4Vinci/Scrapling",
+                "source": "github.com",
+                "summary": "🕷️ The BEST Web Scraping framework that handles everything from a single request to a full-scale crawl! Don't be shy, join here: https://discord.gg/EMgGbDceNQ and follow here for daily tips and tricks: https://x.com/Scrapling_dev",
+                "stars": 100878,
+                "language": "Python",
+                "updated_at": "2026-11-10T12:22:49Z"
+              },
+              {
+                "title": "unclecode/crawl4ai",
+                "url": "https://github.com/unclecode/crawl4ai",
+                "source": "github.com",
+                "summary": "Official Crawl4AI Cloud: a hosted web scraping, extraction, and search API for AI agents. Free API key, 1,000 credits a month, no card. Fully open source: this repo is the Apache-2.0 crawler that powers it, and you can self-host it.",
+                "stars": 87177,
+                "language": "Python",
+                "updated_at": "2026-11-10T12:15:42Z"
+              },
+              {
+                "title": "scrapy/scrapy",
+                "url": "https://github.com/scrapy/scrapy",
+                "source": "github.com",
+                "summary": "Scrapy, a fast high-level web crawling & scraping framework for Python.",
+                "stars": 65307,
+                "language": "Python",
+                "updated_at": "2026-11-10T09:48:22Z"
+              },
+              {
+                "title": "soimort/you-get",
+                "url": "https://github.com/soimort/you-get",
+                "source": "github.com",
+                "summary": ":arrow_double_down: Dumb downloader that scrapes the web",
+                "stars": 56858,
+                "language": "Python",
+                "updated_at": "2026-11-10T08:05:39Z"
+              },
+              {
+                "title": "apify/crawlee-python",
+                "url": "https://github.com/apify/crawlee-python",
+                "source": "github.com",
+                "summary": "Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works with Parsel, BeautifulSoup, Playwright, and raw HTTP. Both headful and headless mode. With proxy rotation.",
+                "stars": 9658,
+                "language": "Python",
+                "updated_at": "2026-11-10T11:09:59Z"
+              }
+            ]
           }
         }
       ]
@@ -873,8 +984,57 @@
           },
           "result": {
             "tool": "github_search",
-            "error": "HTTPError",
-            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=prompt+injection+testing&per_page=5&sort=stars&order=desc"
+            "query": "prompt injection testing",
+            "language": "",
+            "sort": "stars",
+            "total_count": 1522,
+            "items": [
+              {
+                "title": "ZeroLeaks/zeroleaks",
+                "url": "https://github.com/ZeroLeaks/zeroleaks",
+                "source": "github.com",
+                "summary": "AI Security Scanner - Test your AI systems for prompt injection and extraction vulnerabilities",
+                "stars": 745,
+                "language": "TypeScript",
+                "updated_at": "2026-11-08T20:15:18Z"
+              },
+              {
+                "title": "Agent-Threat-Rule/agent-threat-rules",
+                "url": "https://github.com/Agent-Threat-Rule/agent-threat-rules",
+                "source": "github.com",
+                "summary": "Open detection-rule standard for AI agent security threats — like Sigma, but for AI agents. Executable, testable rules for prompt injection, tool poisoning, context exfiltration and MCP attacks. Merged into open-source projects at Microsoft, Cisco, Gen Digital, MISP and FINOS. MIT-licensed.",
+                "stars": 429,
+                "language": "TypeScript",
+                "updated_at": "2026-11-10T08:02:25Z"
+              },
+              {
+                "title": "getagentseal/agentseal",
+                "url": "https://github.com/getagentseal/agentseal",
+                "source": "github.com",
+                "summary": "Security toolkit for AI agents. Scan your machine for dangerous skills and MCP configs, monitor for supply chain attacks, test prompt injection resistance, and audit live MCP servers for tool poisoning.",
+                "stars": 382,
+                "language": "Python",
+                "updated_at": "2026-11-06T13:54:43Z"
+              },
+              {
+                "title": "CyberSunil/LLMVault",
+                "url": "https://github.com/CyberSunil/LLMVault",
+                "source": "github.com",
+                "summary": "An intentionally vulnerable OWASP LLM Top 10 training platform for AI Security, Prompt Injection, RAG Security, Agent Security, and GenAI penetration testing.",
+                "stars": 356,
+                "language": "Python",
+                "updated_at": "2026-11-10T07:12:37Z"
+              },
+              {
+                "title": "praetorian-inc/augustus",
+                "url": "https://github.com/praetorian-inc/augustus",
+                "source": "github.com",
+                "summary": "LLM security testing framework for detecting prompt injection, jailbreaks, and adversarial attacks — 190+ probes, 28 providers, single Go binary",
+                "stars": 320,
+                "language": "Go",
+                "updated_at": "2026-11-08T03:53:39Z"
+              }
+            ]
           }
         },
         {

@@ -110,7 +110,7 @@ Bằng chứng: \[runs/v3\_B\_base\_openai\_20261110T181231483180.json](../../st
 
 Liệt kê đúng 10 case trong `starter\_v0/data/eval\_group.json` (5 single turn + 5 multi turn).
 
-Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](../../starter_v0/data/eval_group.json). Chạy bằng `python run_eval.py --provider openai --version v0-group-quoc-two-tools --suite group --eval-cases data/eval_group.json` trên `gpt-4o-mini`, với cả `github_search` và `hf_search` đã được đăng ký. [Run JSON](../../starter_v0/runs/v0-group-quoc-two-tools_B_group_openai_20261110T184823307765.json) có 10/10 case được đo, 0 provider error; 7/10 case đạt (70%), routing 90%, arguments 70%, multi turn 80%.
+Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](../../starter_v0/data/eval_group.json). Chạy bằng `python run_eval.py --provider openai --version v3 --suite group --eval-cases data/eval_group.json` trên `gpt-4o-mini`, với cả `github_search` và `hf_search` đã được đăng ký. [Run JSON](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json) có 10/10 case được đo, 0 provider error; 7/10 case đạt (70%), routing 90%, arguments 70%, multi turn 80%.
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
@@ -133,7 +133,7 @@ Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](..
 | G05 | `policy(policy_area="tool_usage")` | `policy(query="API nghiên cứu miễn phí bị rate limit", policy_area="all")` | Chọn đúng tool nhưng dùng vùng chung; cần mô tả rõ quy định rate limit thuộc `tool_usage` trong `tools.yaml`. |
 | G09 | `github_search(query="asynchronous web scraping", language="python")` | `github_search(query="web scraping", language="python")` | Đổi đúng ngôn ngữ nhưng bỏ điều kiện “bất đồng bộ” ở lượt mới; cần giữ mọi điều kiện mới khi viết lại query. |
 
-**Cách chấm và giới hạn:** Harness chấm tên tool và tập con arguments ghi trong `expect`; G03 chỉ đo routing để tránh ép một cách viết query duy nhất. GitHub API trả HTTP 403 do rate limit ở cả 7 lần gọi GitHub (G01, G03, G04, G06, G07, G09, G10); G02 gọi đúng `hf_search` nhưng kết quả dataset rỗng. Điểm PASS xác nhận lựa chọn tool/arguments theo harness, không xác nhận đã lấy được nội dung hữu ích từ API. Run này dùng prompt v0 với bộ tool đã mở rộng; `artifact_version=v0-group-quoc-two-tools+peb1c8179815b+tee32b4055306`. Run base trên main dùng bộ 20 case khác và hash prompt/tool khác, nên không so trực tiếp 70% group với điểm base hoặc coi đây là số đo v3.
+**Cách chấm và giới hạn:** Harness chấm tên tool và tập con arguments ghi trong `expect`; G03 chỉ đo routing để tránh ép một cách viết query duy nhất. GitHub API trả HTTP 403 do rate limit ở các lần gọi GitHub; G02 gọi đúng `hf_search` nhưng kết quả dataset rỗng. Điểm PASS xác nhận lựa chọn tool/arguments theo harness, không xác nhận đã lấy được nội dung hữu ích từ API. Run group v3 dùng prompt và bộ tool đã mở rộng; `artifact_version=v3+peb1c8179815b+tee32b4055306`. Run base dùng bộ 20 case khác, nên không so trực tiếp 70% group với điểm base.
 
 ### B4. Live Chat Evidence
 
@@ -212,4 +212,3 @@ Chi tiết đóng góp của từng thành viên nằm trong [TEAM.md](../../TEA
 ## 8\. Tài liệu tham khảo
 
 * 
-
