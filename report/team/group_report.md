@@ -110,30 +110,30 @@ Bằng chứng: \[runs/v3\_B\_base\_openai\_20261110T181231483180.json](../../st
 
 Liệt kê đúng 10 case trong `starter\_v0/data/eval\_group.json` (5 single turn + 5 multi turn).
 
-Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](../../starter_v0/data/eval_group.json). Chạy bằng `python run_eval.py --provider openai --version v3 --suite group --eval-cases data/eval_group.json` trên `gpt-4o-mini`, với cả `github_search` và `hf_search` đã được đăng ký. [Run JSON](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json) có 10/10 case được đo, 0 provider error; 7/10 case đạt (70%), routing 90%, arguments 70%, multi turn 80%.
+Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](../../starter_v0/data/eval_group.json). Run ban đầu trên `gpt-4o-mini`, với cả `github_search` và `hf_search` đã đăng ký: [v3_B_group_openai_20261110T192353230210.json](../../starter_v0/runs/v3_B_group_openai_20261110T192353230210.json) đo 10/10 case, 0 provider error; đạt 7/10 (70%), routing 90%, arguments 70%, multi-turn 80%. Sau khi phân tích lỗi và chỉ chỉnh `artifacts/system_prompt.md`, chạy lại cùng bộ case/model. [Run thử prompt lần 1](../../starter_v0/runs/group-quoc-clarify_B_group_openai_20261110T194544874142.json) đạt 7/10 (70%), routing 100%; ba case còn lỗi do thiếu argument mặc định tường minh và thiếu ý “bất đồng bộ” trong query. Bản prompt tiếp theo nêu rõ các giá trị đó. [Run xác nhận prompt trước khi đồng bộ](../../starter_v0/runs/group-quoc-clarify-v2_B_group_openai_20261110T194638090929.json) đạt 10/10. Sau khi đồng bộ với prompt mới nhất trên `origin/main` và giữ các quy tắc sửa lỗi, [run xác nhận để bàn giao](../../starter_v0/runs/group-quoc-main-sync_B_group_openai_20261110T195411233028.json) đo 10/10, 0 provider error; tool routing, argument và multi-turn đều 100%.
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
 | G01 (single) | Repo Python về RAG; language, sort, limit | `github_search` (`python`, `stars`, 3) | PASS |
 | G02 (single) | Dataset tiếng Việt trên Hugging Face; sort theo cập nhật | `hf_search` (`datasets`, `lastModified`, 4) | PASS |
 | G03 (single) | Phân biệt repository với paper và web | `github_search` | PASS |
-| G04 (single) | Thiếu chủ đề tìm repo thì hỏi lại | `clarify` (`response_type=text`) | FAIL: đoán `AI research` và gọi `github_search` |
-| G05 (single) | Tra policy nội bộ về API miễn phí bị rate limit | `policy` (`policy_area=tool_usage`) | FAIL: dùng `policy_area=all` |
+| G04 (single) | Thiếu chủ đề tìm repo thì hỏi lại | `clarify` (`response_type=text`) | PASS ở run xác nhận; FAIL ở run ban đầu: đoán `AI research` |
+| G05 (single) | Tra policy nội bộ về API miễn phí bị rate limit | `policy` (`policy_area=tool_usage`) | PASS ở run xác nhận; FAIL ở run ban đầu: dùng `policy_area=all` |
 | G06 (multi) | Giữ chủ đề cũ, lấy language và limit ở lượt mới | `github_search` (vector database, `python`, `stars`, 4) | PASS |
 | G07 (multi) | Ưu tiên yêu cầu sửa sort và limit mới nhất | `github_search` (agent framework, `python`, `updated`, 2) | PASS |
 | G08 (multi) | Chuyển từ tìm repo sang paper arXiv | `papers` | PASS |
-| G09 (multi) | Sửa language và chủ đề thành scraping bất đồng bộ | `github_search` (`asynchronous web scraping`, `python`) | FAIL: query bỏ mất “bất đồng bộ” |
+| G09 (multi) | Sửa language và chủ đề thành scraping bất đồng bộ | `github_search` (`asynchronous web scraping`, `python`) | PASS ở run xác nhận; FAIL ở run ban đầu: query bỏ mất “bất đồng bộ” |
 | G10 (multi) | Giữ yêu cầu tìm repo và thêm model Hugging Face | `github_search` + `hf_search` | PASS |
 
-**Phân tích ba case FAIL** (đọc từ `results[*].result` trong run JSON):
+**Phân tích ba lỗi của run ban đầu và thay đổi đã cải thiện chúng:**
 
-| Case | Expected | Actual | Nguyên nhân và hướng xử lý |
+| Case | Expected | Actual ban đầu | Thay đổi và kết quả |
 |---|---|---|---|
-| G04 | `clarify(response_type=text)` | `github_search(query="AI research")` | Agent đoán chủ đề khi người dùng chưa nêu. Prompt v0 đang khuyến khích đoán; cần yêu cầu hỏi lại khi thiếu chủ đề tìm kiếm. |
-| G05 | `policy(policy_area="tool_usage")` | `policy(query="API nghiên cứu miễn phí bị rate limit", policy_area="all")` | Chọn đúng tool nhưng dùng vùng chung; cần mô tả rõ quy định rate limit thuộc `tool_usage` trong `tools.yaml`. |
-| G09 | `github_search(query="asynchronous web scraping", language="python")` | `github_search(query="web scraping", language="python")` | Đổi đúng ngôn ngữ nhưng bỏ điều kiện “bất đồng bộ” ở lượt mới; cần giữ mọi điều kiện mới khi viết lại query. |
+| G04 | `clarify(response_type=text)` | `github_search(query="AI research")` | Bổ sung yêu cầu hỏi lại bằng `clarify` với `response_type="text"`; run xác nhận cuối PASS. |
+| G05 | `policy(policy_area="tool_usage")` | `policy_area="all"` | Yêu cầu đặt rõ vùng hẹp nhất và ánh xạ rate limit/API/tool errors sang `tool_usage`; run xác nhận cuối PASS. |
+| G09 | `github_search(query="asynchronous web scraping", language="python")` | Query chỉ `web scraping` | Yêu cầu giữ đủ ý mới trong query; run xác nhận cuối PASS. |
 
-**Cách chấm và giới hạn:** Harness chấm tên tool và tập con arguments ghi trong `expect`; G03 chỉ đo routing để tránh ép một cách viết query duy nhất. GitHub API trả HTTP 403 do rate limit ở 3 lần gọi GitHub (G01, G03, G04); G02 gọi đúng `hf_search` nhưng kết quả dataset rỗng. Điểm PASS xác nhận lựa chọn tool/arguments theo harness, không xác nhận đã lấy được nội dung hữu ích từ API. Lệnh chạy group mang nhãn `v3`, nhưng `prompt_hash=eb1c8179815b` / `tools_hash=ee32b4055306` không khớp hash v3 ở `version_log.csv` (`c800280bc6ca` / `0f6be0ee4fef`); vì vậy run này chưa chứng minh group eval đã được đo với đúng artifacts v3. Run base dùng bộ 20 case khác, nên không so trực tiếp 70% group với điểm base.
+**Cách chấm và giới hạn:** Harness chấm tên tool và tập con arguments ghi trong `expect`; G03 chỉ đo routing để tránh ép một cách viết query duy nhất. Run xác nhận để bàn giao có 0 provider error; ở các run trước, GitHub API có lúc trả HTTP 403 do rate limit. Điểm xác nhận đo hành vi tool-call, không đảm bảo chất lượng hay độ đầy đủ của dữ liệu bên ngoài. Lệnh chạy Group Eval dùng nhãn riêng `group-quoc-main-sync` và run lưu hash artifacts thực tế, không đại diện cho mốc v3 của version log. Run base dùng bộ 20 case khác nên không so sánh trực tiếp với điểm group.
 
 ### B4. Live Chat Evidence
 

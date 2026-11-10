@@ -81,12 +81,17 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Đóng góp cụ thể
 
-* Viết `starter_v0/data/eval_group.json`, đo lựa chọn hai tool mới `github_search`, `hf_search` và các tình huống phân biệt với `papers`/`policy`.
-* Chạy Group Eval cuối bằng OpenAI `gpt-4o-mini`, phân tích ba case chưa đạt và giới hạn do GitHub API rate limit.
-* Điền mục B3 của `report/team/group_report.md` và hoàn thiện báo cáo cá nhân với bằng chứng run v3.
+  * Thiết kế `starter_v0/data/eval_group.json` gồm đúng 10 case (5 single-turn, 5 multi-turn), bao phủ routing `github_search`/`hf_search`, thiếu thông tin, policy, chuyển nguồn và cập nhật truy vấn qua nhiều lượt.
+  * Chạy baseline Group Eval với OpenAI `gpt-4o-mini` (7/10, 70%), đọc expected/actual để phân tích lỗi G04, G05, G09; ghi nhận riêng GitHub API rate limit và không quy lỗi API thành lỗi provider.
+  * Cải thiện `starter_v0/artifacts/system_prompt.md`: yêu cầu hỏi lại bằng `clarify(response_type="text")` khi thiếu chủ đề; đặt `policy_area="tool_usage"` rõ ràng cho vấn đề API/tool; giữ khái niệm mới khi sửa query multi-turn. Chạy hai lượt xác nhận, lưu JSON riêng; lượt cuối đạt 10/10, routing/argument/multi-turn đều 100%, provider error 0.
+  * Cập nhật mục B3 trong `report/team/group_report.md` và báo cáo cá nhân gồm baseline, lần thử trung gian, run xác nhận, phân tích lỗi, hash/artifact version và giới hạn diễn giải. Không thay đổi dataset hoặc expected để tác động kết quả.
 
 ### Bằng chứng
 
 * `starter_v0/runs/v3_B_group_openai_20261110T192353230210.json`
+  * `starter_v0/runs/group-quoc-clarify_B_group_openai_20261110T194544874142.json`
+  * `starter_v0/runs/group-quoc-clarify-v2_B_group_openai_20261110T194638090929.json`
+  * `starter_v0/runs/group-quoc-main-sync_B_group_openai_20261110T195411233028.json` (run xác nhận cuối trên prompt đã đồng bộ với `origin/main`)
+  * `starter_v0/artifacts/system_prompt.md` (quy tắc cải thiện cho Group Eval)
 * `report/team/group_report.md` (mục B3)
 * `report/team/2A202604113_PhamTranQuoc.md`
