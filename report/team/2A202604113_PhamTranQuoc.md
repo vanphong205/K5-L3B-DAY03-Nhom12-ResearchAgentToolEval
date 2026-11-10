@@ -18,7 +18,7 @@ Thiết kế bộ Group Eval gồm 10 case mới (5 single turn, 5 multi turn), 
 3. Điều chỉnh G03 để chỉ đo routing, vì phép so chuỗi query nguyên văn có thể báo sai với truy vấn cùng nghĩa. Sau khi `hf_search` được tích hợp từ `main`, đổi G02 và G10 để phủ cả hai tool mới. Các thay đổi này được thực hiện trước run chính và nêu rõ trong phân tích.
 4. Chạy Group Eval bằng OpenAI `gpt-4o-mini`, nhãn `v0-group-quoc-two-tools`. Run chính đo đủ 10/10 case, 0 provider error, đạt 7/10 case; routing 90%, arguments 70%, multi turn 80%.
 5. Đọc `actual_tool_calls`, `failures`, `observed_mismatch` và `tool_results` để phân tích ba case FAIL (G04, G05, G09). Phát hiện thêm GitHub Search API trả 403 rate limit ở G10, nên tách lỗi thực thi tool khỏi lỗi chọn tool/arguments của model.
-6. Ghi [phân tích chi tiết](../../starter_v0/analysis/group_eval_v0.md) và điền bảng B3 trong [báo cáo nhóm](group_report.md).
+6. Điền bảng B3 và phần phân tích expected/actual của ba case chưa đạt trong [báo cáo nhóm](group_report.md).
 
 ## 4. Bằng chứng
 
@@ -26,8 +26,7 @@ Thiết kế bộ Group Eval gồm 10 case mới (5 single turn, 5 multi turn), 
 |---|---|
 | Bộ Group Eval | [eval_group.json](../../starter_v0/data/eval_group.json) |
 | Run chính | [v0-group-quoc-two-tools_B_group_openai_20261110T183742208256.json](../../starter_v0/runs/v0-group-quoc-two-tools_B_group_openai_20261110T183742208256.json) |
-| Phân tích lỗi và giới hạn | [group_eval_v0.md](../../starter_v0/analysis/group_eval_v0.md) |
-| Bảng B3 của nhóm | [group_report.md](group_report.md) |
+| Bảng B3, phân tích lỗi và giới hạn | [group_report.md](group_report.md) |
 | Kiểm tra contract | `python -m pytest tests/test_tool_contract.py -q` → 65 passed sau khi tích hợp `hf_search` |
 
 **AI/công cụ đã dùng:** Codex hỗ trợ rà yêu cầu, soạn case và tổng hợp báo cáo; Python `run_eval.py` gọi provider OpenAI và ghi run JSON thật. Tôi kiểm tra lại số lượng 5 single + 5 multi, `summary` và từng `results[*].result` trong run, đối chiếu expected/actual với file case. Không dùng AI để tạo số liệu hoặc run giả.

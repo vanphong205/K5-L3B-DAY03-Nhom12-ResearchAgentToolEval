@@ -94,7 +94,15 @@ Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](..
 | G09 (multi) | Sửa language và chủ đề thành scraping bất đồng bộ | `github_search` (`asynchronous web scraping`, `python`) | FAIL: query bỏ mất “bất đồng bộ” |
 | G10 (multi) | Giữ yêu cầu tìm repo và thêm model Hugging Face | `github_search` + `hf_search` | PASS |
 
-Chi tiết expected/actual và nguyên nhân ba lỗi nằm trong [phân tích Group Eval](../../starter_v0/analysis/group_eval_v0.md). GitHub API trả HTTP 403 do rate limit ở G10; điểm PASS/FAIL ở đây chấm lựa chọn tool và arguments, không xác nhận nội dung API đã lấy thành công. Run này dùng prompt v0 và bộ tool đã mở rộng, nên chưa phản ánh hiệu quả các vòng tối ưu v1–v3. Không so trực tiếp điểm group với run base trên main vì khác bộ case và hash artifacts.
+**Phân tích ba case FAIL** (đọc từ `results[*].result` trong run JSON):
+
+| Case | Expected | Actual | Nguyên nhân và hướng xử lý |
+|---|---|---|---|
+| G04 | `clarify(response_type=text)` | `github_search(query="AI")` | Agent đoán chủ đề khi người dùng chưa nêu. Prompt v0 đang khuyến khích đoán; cần yêu cầu hỏi lại khi thiếu chủ đề tìm kiếm. |
+| G05 | `policy(policy_area="data_privacy")` | `policy(query="API key in prompt")` | Chọn đúng tool nhưng thiếu `policy_area`; cần mô tả rõ API key/secret thuộc vùng `data_privacy` trong `tools.yaml`. |
+| G09 | `github_search(query="asynchronous web scraping", language="python")` | `github_search(query="web scraping", language="python")` | Đổi đúng ngôn ngữ nhưng bỏ điều kiện “bất đồng bộ” ở lượt mới; cần giữ mọi điều kiện mới khi viết lại query. |
+
+**Cách chấm và giới hạn:** Harness chấm tên tool và tập con arguments ghi trong `expect`; G03 chỉ đo routing để tránh ép một cách viết query duy nhất. G10 được chấm PASS về tool calls nhưng GitHub API trả HTTP 403 do rate limit; G02 gọi đúng `hf_search` nhưng kết quả dataset rỗng. Điểm PASS không xác nhận đã lấy được nội dung hữu ích từ API. Run này dùng prompt v0 với bộ tool đã mở rộng; `artifact_version=v0-group-quoc-two-tools+peb1c8179815b+tee32b4055306`. Run base trên main dùng bộ 20 case khác và hash prompt/tool khác, nên không so trực tiếp 70% group với điểm base hoặc coi đây là số đo v3.
 
 ### B4. Live Chat Evidence
 
