@@ -5,18 +5,18 @@
 
 - Họ tên: Nguyễn Quốc Quang Anh
 - MSSV: 2A202604120
-- Email: nguyenquocquanganh28@gmail.com
+- Email: 26ai.anhnqq@vinuni.edu.vn
 - Vai trò: Thành viên 2 — Prompt Engineering & Tool Optimization
 
 ## 2. Phần việc phụ trách
 
-Tôi phụ trách phân tích baseline của research agent, cải thiện system prompt và tool declarations qua các vòng v1, v2, v3, chạy evaluation/test, ghi version log và tổng hợp bằng chứng cho báo cáo.
+Phụ trách phân tích baseline của research agent, cải thiện system prompt và tool declarations qua các vòng v1, v2, v3, chạy evaluation/test, ghi version log và tổng hợp bằng chứng cho báo cáo.
 
 ## 3. Đóng góp cụ thể
 
 ### Phân tích baseline
 
-Tôi kiểm tra code nhóm trên `origin/main` tại commit `d52e697` và đối chiếu nhánh `origin/HoangMinh`. Run cũ trên nhánh HoangMinh không khớp hash `tools.yaml` đang commit trên nhánh đó hoặc trên main, nên tôi không dùng run này làm baseline chính. Tôi chạy lại v0 trên đúng artifacts đã commit ở `origin/main`.
+Kiểm tra code nhóm trên `origin/main` tại commit `d52e697` và đối chiếu nhánh `origin/HoangMinh`. Run cũ trên nhánh HoangMinh không khớp hash `tools.yaml` đang commit trên nhánh đó hoặc trên main, nên không dùng run này làm baseline chính. Chạy lại v0 trên đúng artifacts đã commit ở `origin/main`.
 
 Baseline v0 đạt 13/20 case (case accuracy 0.65), tool routing 0.75, argument accuracy 0.65 và multi-turn accuracy 1.00; đủ 20 case được đo, không có provider error. Các lỗi gồm: query/topic lookup sai ở R03/R13; gọi `send` cho câu hỏi ngoài phạm vi ở R08/R14; và không hỏi/không xác nhận đúng khi thiếu handle, URL hoặc ý định gửi ở R10–R12.
 
