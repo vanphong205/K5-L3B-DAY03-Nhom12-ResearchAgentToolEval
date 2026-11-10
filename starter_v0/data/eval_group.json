@@ -1,7 +1,7 @@
 {
   "dataset_id": "day03_v2_research_group",
   "dataset_role": "group",
-  "description": "Bộ eval nhóm của Phạm Trấn Quốc: 5 single turn và 5 multi turn, tập trung vào GitHub repository search, arguments, hỏi lại và phân biệt với paper và policy.",
+  "description": "Bộ eval nhóm của Phạm Trấn Quốc: 5 single turn và 5 multi turn, đo cả github_search và hf_search cùng các tình huống phân biệt paper, policy, thiếu thông tin và sửa yêu cầu.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
   "cases": [
     {
@@ -14,13 +14,13 @@
       "metadata": {"difficulty": "medium", "what_it_tests": "Route tìm project code sang github_search và trích đúng ngôn ngữ, số lượng, sort."}
     },
     {
-      "id": "G02_github_typescript_mcp",
+      "id": "G02_hf_vietnamese_rag_datasets",
       "phase": "B",
       "suite": "group",
-      "query": "Tìm trên GitHub các repo TypeScript về Model Context Protocol, sắp xếp theo cập nhật gần đây và lấy tối đa 5 kết quả.",
+      "query": "Trên Hugging Face, tìm 4 bộ dữ liệu tiếng Việt để đánh giá RAG, sắp xếp theo cập nhật gần đây.",
       "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "github_search", "args": {"query": "Model Context Protocol", "language": "typescript", "sort": "updated", "max_results": 5}}]},
-      "metadata": {"difficulty": "medium", "what_it_tests": "Trích query, language, updated sort và giới hạn kết quả cho tìm kiếm GitHub."}
+      "expect": {"tool_calls": [{"name": "hf_search", "args": {"kind": "datasets", "sort": "lastModified", "max_results": 4}}]},
+      "metadata": {"difficulty": "medium", "what_it_tests": "Route tìm dataset trên Hugging Face sang hf_search và trích kind=datasets, sort=lastModified, max_results=4."}
     },
     {
       "id": "G03_github_vs_web_search",
@@ -29,7 +29,7 @@
       "query": "Cho mình tìm repository trên GitHub về benchmark đánh giá LLM agent, đừng tìm bài báo khoa học.",
       "failure_type": "wrong_tool",
       "expect": {"tool_calls": [{"name": "github_search", "args": {}}]},
-      "metadata": {"difficulty": "medium", "what_it_tests": "Phân biệt yêu cầu tìm repository mã nguồn với papers/arXiv hoặc lookup web."}
+      "metadata": {"difficulty": "medium", "what_it_tests": "Phân biệt yêu cầu tìm repository mã nguồn với model/dataset Hugging Face, papers/arXiv hoặc lookup web."}
     },
     {
       "id": "G04_github_missing_query",
@@ -102,17 +102,17 @@
       "metadata": {"difficulty": "hard", "what_it_tests": "Ưu tiên sửa đổi mới nhất của query và language, không giữ lại JavaScript hoặc query cũ."}
     },
     {
-      "id": "G10_multiturn_github_and_papers",
+      "id": "G10_multiturn_github_and_hf_models",
       "phase": "B",
       "suite": "group",
       "turns": [
         {"role": "user", "content": "Tìm một repository GitHub về prompt injection testing."},
         {"role": "assistant", "content": "Mình có thể tìm repo công khai."},
-        {"role": "user", "content": "Tìm thêm paper arXiv cùng chủ đề; lần này cho cả repo và paper."}
+        {"role": "user", "content": "Tìm thêm model embedding tiếng Việt trên Hugging Face; lần này cho cả repo GitHub lúc trước và model này."}
       ],
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "github_search", "args": {}}, {"name": "papers", "args": {}}]},
-      "metadata": {"difficulty": "hard", "what_it_tests": "Lượt mới nhất yêu cầu hai nguồn, nên gọi cả github_search và papers; không bỏ yêu cầu repo ở lượt đầu."}
+      "expect": {"tool_calls": [{"name": "github_search", "args": {}}, {"name": "hf_search", "args": {"kind": "models"}}]},
+      "metadata": {"difficulty": "hard", "what_it_tests": "Lượt mới nhất yêu cầu cả repo và model, nên gọi cả github_search và hf_search; không bỏ yêu cầu repo ở lượt đầu."}
     }
   ]
 }
