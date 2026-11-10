@@ -1,5 +1,5 @@
 {
-  "run_id": "v0-group-quoc-two-tools_B_group_openai_20261110T183742208256",
+  "run_id": "v0-group-quoc-two-tools_B_group_openai_20261110T184823307765",
   "version": "v0-group-quoc-two-tools",
   "artifact_version": "v0-group-quoc-two-tools+peb1c8179815b+tee32b4055306",
   "prompt_hash": "eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68",
@@ -14,7 +14,7 @@
   "dataset_id": "day03_v2_research_group",
   "dataset_role": "group",
   "description": "Bộ eval nhóm của Phạm Trấn Quốc: 5 single turn và 5 multi turn, đo cả github_search và hf_search cùng các tình huống phân biệt paper, policy, thiếu thông tin và sửa yêu cầu.",
-  "generated_at": "2026-11-10T18:37:42",
+  "generated_at": "2026-11-10T18:48:23",
   "summary": {
     "total_cases": 10,
     "measured_cases": 10,
@@ -90,39 +90,8 @@
           },
           "result": {
             "tool": "github_search",
-            "query": "RAG",
-            "language": "python",
-            "sort": "stars",
-            "total_count": 353073,
-            "items": [
-              {
-                "title": "langgenius/dify",
-                "url": "https://github.com/langgenius/dify",
-                "source": "github.com",
-                "summary": "Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one collaborative workspace. Deploy on cloud, VPC, or self-hosted, so teams move from prototype to production without rebuilding the stack.",
-                "stars": 160826,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:30:53Z"
-              },
-              {
-                "title": "langchain-ai/langchain",
-                "url": "https://github.com/langchain-ai/langchain",
-                "source": "github.com",
-                "summary": "The agent engineering platform.",
-                "stars": 149300,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:00:31Z"
-              },
-              {
-                "title": "Graphify-Labs/graphify",
-                "url": "https://github.com/Graphify-Labs/graphify",
-                "source": "github.com",
-                "summary": "Turn any codebase, with its docs, SQL schemas, configs, and PDFs, into a queryable knowledge graph. A /graphify skill for Claude Code, Cursor, Codex, and Gemini CLI: local deterministic AST parsing, every edge explained, no vector store.",
-                "stars": 145313,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:36:34Z"
-              }
-            ]
+            "error": "HTTPError",
+            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=RAG+language%3Apython&per_page=3&sort=stars&order=desc"
           }
         }
       ]
@@ -239,57 +208,8 @@
           },
           "result": {
             "tool": "github_search",
-            "query": "LLM agent benchmark",
-            "language": "",
-            "sort": "stars",
-            "total_count": 3267,
-            "items": [
-              {
-                "title": "AgentOps-AI/agentops",
-                "url": "https://github.com/AgentOps-AI/agentops",
-                "source": "github.com",
-                "summary": "Python SDK for AI agent monitoring, LLM cost tracking, benchmarking, and more. Integrates with most LLMs and agent frameworks including CrewAI, Agno, OpenAI Agents SDK, Langchain, Autogen, AG2, and CamelAI",
-                "stars": 5953,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:01:36Z"
-              },
-              {
-                "title": "FareedKhan-dev/all-agentic-architectures",
-                "url": "https://github.com/FareedKhan-dev/all-agentic-architectures",
-                "source": "github.com",
-                "summary": "35 production-grade agentic AI architectures (Reflexion, LATS, GraphRAG, MemGPT, Voyager, BrowserAgent, ...) — a Python library and runnable textbook with multi-provider LLM support and a 17-task benchmark leaderboard.",
-                "stars": 4722,
-                "language": "Jupyter Notebook",
-                "updated_at": "2026-11-10T09:40:55Z"
-              },
-              {
-                "title": "THUDM/AgentBench",
-                "url": "https://github.com/THUDM/AgentBench",
-                "source": "github.com",
-                "summary": "A Comprehensive Benchmark to Evaluate LLMs as Agents (ICLR'24)",
-                "stars": 3819,
-                "language": "Python",
-                "updated_at": "2026-11-10T07:04:08Z"
-              },
-              {
-                "title": "llm-as-a-verifier/llm-as-a-verifier",
-                "url": "https://github.com/llm-as-a-verifier/llm-as-a-verifier",
-                "source": "github.com",
-                "summary": "LLM-as-a-Verifier is a general-purpose framework that provides fine-grained feedback for any agent without requiring additional training. It achieves SOTA performance across coding, robotics, and medical agentic benchmarks.",
-                "stars": 3343,
-                "language": "Python",
-                "updated_at": "2026-11-09T21:45:04Z"
-              },
-              {
-                "title": "xlang-ai/OSWorld",
-                "url": "https://github.com/xlang-ai/OSWorld",
-                "source": "github.com",
-                "summary": "[NeurIPS 2024] OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments",
-                "stars": 3258,
-                "language": "Python",
-                "updated_at": "2026-11-10T06:18:04Z"
-              }
-            ]
+            "error": "HTTPError",
+            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=LLM+agent+benchmark&per_page=5&sort=stars&order=desc"
           }
         }
       ]
@@ -323,7 +243,7 @@
           {
             "name": "github_search",
             "args": {
-              "query": "AI",
+              "query": "AI research",
               "sort": "stars",
               "max_results": 5
             }
@@ -342,84 +262,35 @@
         {
           "tool": "github_search",
           "args": {
-            "query": "AI",
+            "query": "AI research",
             "sort": "stars",
             "max_results": 5
           },
           "result": {
             "tool": "github_search",
-            "query": "AI",
-            "language": "",
-            "sort": "stars",
-            "total_count": 7375530,
-            "items": [
-              {
-                "title": "morluto/rea",
-                "url": "https://github.com/morluto/rea",
-                "source": "github.com",
-                "summary": "Reverse engineer anything with agents, from app behavior down to native binaries.",
-                "stars": 448522,
-                "language": "TypeScript",
-                "updated_at": "2026-11-10T11:37:23Z"
-              },
-              {
-                "title": "openclaw/openclaw",
-                "url": "https://github.com/openclaw/openclaw",
-                "source": "github.com",
-                "summary": "The AI that really does things. Any OS. Any Platform. The lobster way. 🦞 ",
-                "stars": 394280,
-                "language": "TypeScript",
-                "updated_at": "2026-11-10T11:36:41Z"
-              },
-              {
-                "title": "obra/superpowers",
-                "url": "https://github.com/obra/superpowers",
-                "source": "github.com",
-                "summary": "An agentic skills framework & software development methodology that works.",
-                "stars": 315401,
-                "language": "Shell",
-                "updated_at": "2026-11-10T11:36:31Z"
-              },
-              {
-                "title": "NousResearch/hermes-agent",
-                "url": "https://github.com/NousResearch/hermes-agent",
-                "source": "github.com",
-                "summary": "The agent that grows with you",
-                "stars": 262230,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:37:13Z"
-              },
-              {
-                "title": "n8n-io/n8n",
-                "url": "https://github.com/n8n-io/n8n",
-                "source": "github.com",
-                "summary": "Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host or cloud, 400+ integrations.",
-                "stars": 209993,
-                "language": "TypeScript",
-                "updated_at": "2026-11-10T11:35:19Z"
-              }
-            ]
+            "error": "HTTPError",
+            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=AI+research&per_page=5&sort=stars&order=desc"
           }
         }
       ]
     },
     {
-      "id": "G05_company_policy_not_github",
+      "id": "G05_internal_rate_limit_policy",
       "phase": "B",
       "suite": "group",
       "case_suite": "group",
       "is_multiturn": false,
       "metadata": {
         "difficulty": "medium",
-        "what_it_tests": "Yêu cầu hỏi policy nội bộ phải route tới policy với policy_area=data_privacy, không dùng vùng all hoặc tìm web."
+        "what_it_tests": "Câu hỏi về cách xử lý rate limit theo quy định nội bộ phải route tới policy với policy_area=tool_usage, không tìm web hoặc dùng vùng all."
       },
-      "input": "Theo policy công ty, có được đưa API key vào prompt của model không?",
+      "input": "Theo policy nội bộ, khi API nghiên cứu miễn phí bị rate limit thì agent có được che giấu lỗi trong run JSON không?",
       "expect": {
         "tool_calls": [
           {
             "name": "policy",
             "args": {
-              "policy_area": "data_privacy"
+              "policy_area": "tool_usage"
             }
           }
         ]
@@ -432,7 +303,8 @@
           {
             "name": "policy",
             "args": {
-              "query": "API key in prompt"
+              "query": "API nghiên cứu miễn phí bị rate limit",
+              "policy_area": "all"
             }
           }
         ],
@@ -441,36 +313,76 @@
         "observed_mismatch": "wrong_arg_value",
         "failure_type": "wrong_arg_value",
         "failures": [
-          "policy_area: expected 'data_privacy', got None"
+          "policy_area: expected 'tool_usage', got 'all'"
         ]
       },
       "tool_results": [
         {
           "tool": "policy",
           "args": {
-            "query": "API key in prompt"
+            "query": "API nghiên cứu miễn phí bị rate limit",
+            "policy_area": "all"
           },
           "result": {
             "tool": "search_company_policy",
-            "query": "API key in prompt",
+            "query": "API nghiên cứu miễn phí bị rate limit",
             "policy_area": "all",
             "results": [
               {
-                "doc_id": "data-privacy-policy",
-                "policy_area": "data_privacy",
-                "title": "Data Privacy Policy For AI Tools",
-                "section": "API keys and credentials",
-                "facts": "- API keys must stay in `.env` or a secret manager. - Never include API keys in prompts, transcripts, reports, screenshots, or git commits. - If a key is exposed, rotate it before continuing the lab.",
+                "doc_id": "tool-usage-policy",
+                "policy_area": "tool_usage",
+                "title": "AI Tool Usage Policy",
+                "section": "Rate limits",
+                "facts": "- arXiv requests should be spaced by at least 3 seconds. - Free-tier APIs can rate-limit or fail; record provider errors in the run JSON instead of hiding them.",
                 "source": "Company Research Policy Handbook v1",
                 "effective_date": "2026-06-01",
                 "tags": [
-                  "privacy",
-                  "confidential",
-                  "customer data",
-                  "PII",
-                  "AI tools"
+                  "tool use",
+                  "web search",
+                  "firecrawl",
+                  "twitter",
+                  "arxiv",
+                  "rate limit"
                 ],
-                "score": 2,
+                "score": 8,
+                "untrusted_text": []
+              },
+              {
+                "doc_id": "tool-usage-policy",
+                "policy_area": "tool_usage",
+                "title": "AI Tool Usage Policy",
+                "section": "Tool selection",
+                "facts": "- Use company policy search for internal rules. - Use web search for current public news. - Use URL reading for a specific link. - Use Twitter/X tools for tweets and social signals. - Use arXiv tools for academic papers and preprints.",
+                "source": "Company Research Policy Handbook v1",
+                "effective_date": "2026-06-01",
+                "tags": [
+                  "tool use",
+                  "web search",
+                  "firecrawl",
+                  "twitter",
+                  "arxiv",
+                  "rate limit"
+                ],
+                "score": 6,
+                "untrusted_text": []
+              },
+              {
+                "doc_id": "tool-usage-policy",
+                "policy_area": "tool_usage",
+                "title": "AI Tool Usage Policy",
+                "section": "Write actions",
+                "facts": "- Any tool that sends, posts, books, deletes, or changes external state requires explicit confirmation. - If confirmation is missing, call `ask_user(response_type=\"yes_no\")`.",
+                "source": "Company Research Policy Handbook v1",
+                "effective_date": "2026-06-01",
+                "tags": [
+                  "tool use",
+                  "web search",
+                  "firecrawl",
+                  "twitter",
+                  "arxiv",
+                  "rate limit"
+                ],
+                "score": 6,
                 "untrusted_text": []
               }
             ],
@@ -549,48 +461,8 @@
           },
           "result": {
             "tool": "github_search",
-            "query": "vector database",
-            "language": "python",
-            "sort": "stars",
-            "total_count": 6801,
-            "items": [
-              {
-                "title": "pathwaycom/serviette",
-                "url": "https://github.com/pathwaycom/serviette",
-                "source": "github.com",
-                "summary": "A no-code RAG server that keeps answers in sync with your documents. Works with 8 vector databases. Built on Pathway.",
-                "stars": 58721,
-                "language": "Python",
-                "updated_at": "2026-11-10T10:12:12Z"
-              },
-              {
-                "title": "rocketride-org/rocketride-server",
-                "url": "https://github.com/rocketride-org/rocketride-server",
-                "source": "github.com",
-                "summary": "High-performance AI pipeline engine with a C++ core and 50+ Python-extensible nodes. Build, debug, and scale LLM workflows with 13+ model providers, 8+ vector databases, and agent orchestration, all from your IDE. Includes VS Code extension, TypeScript/Python SDKs, and Docker deployment.",
-                "stars": 20068,
-                "language": "Python",
-                "updated_at": "2026-11-10T10:15:54Z"
-              },
-              {
-                "title": "GanymedeNil/document.ai",
-                "url": "https://github.com/GanymedeNil/document.ai",
-                "source": "github.com",
-                "summary": "基于向量数据库与GPT3.5的通用本地知识库方案(A universal local knowledge base solution based on vector database and GPT3.5)",
-                "stars": 3661,
-                "language": "Python",
-                "updated_at": "2026-11-06T15:52:36Z"
-              },
-              {
-                "title": "hegelai/prompttools",
-                "url": "https://github.com/hegelai/prompttools",
-                "source": "github.com",
-                "summary": "Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).",
-                "stars": 3061,
-                "language": "Python",
-                "updated_at": "2026-11-09T05:56:02Z"
-              }
-            ]
+            "error": "HTTPError",
+            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=vector+database+language%3Apython&per_page=4&sort=stars&order=desc"
           }
         }
       ]
@@ -664,30 +536,8 @@
           },
           "result": {
             "tool": "github_search",
-            "query": "agent framework",
-            "language": "python",
-            "sort": "updated",
-            "total_count": 21687,
-            "items": [
-              {
-                "title": "trenthalden/dev-framework",
-                "url": "https://github.com/trenthalden/dev-framework",
-                "source": "github.com",
-                "summary": "Stop vibecoding chaos: connected architecture, use cases, tests, and documentation for humans and AI agents.",
-                "stars": 2,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:36:58Z"
-              },
-              {
-                "title": "microsoft/agent-framework",
-                "url": "https://github.com/microsoft/agent-framework",
-                "source": "github.com",
-                "summary": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
-                "stars": 14617,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:35:01Z"
-              }
-            ]
+            "error": "HTTPError",
+            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=agent+framework+language%3Apython&per_page=2&sort=updated&order=desc"
           }
         }
       ]
@@ -943,57 +793,8 @@
           },
           "result": {
             "tool": "github_search",
-            "query": "web scraping",
-            "language": "python",
-            "sort": "stars",
-            "total_count": 58765,
-            "items": [
-              {
-                "title": "D4Vinci/Scrapling",
-                "url": "https://github.com/D4Vinci/Scrapling",
-                "source": "github.com",
-                "summary": "🕷️ The BEST Web Scraping framework that handles everything from a single request to a full-scale crawl! Don't be shy, join here: https://discord.gg/EMgGbDceNQ and follow here for daily tips and tricks: https://x.com/Scrapling_dev",
-                "stars": 100860,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:32:25Z"
-              },
-              {
-                "title": "unclecode/crawl4ai",
-                "url": "https://github.com/unclecode/crawl4ai",
-                "source": "github.com",
-                "summary": "Official Crawl4AI Cloud: a hosted web scraping, extraction, and search API for AI agents. Free API key, 1,000 credits a month, no card. Fully open source: this repo is the Apache-2.0 crawler that powers it, and you can self-host it.",
-                "stars": 87175,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:14:37Z"
-              },
-              {
-                "title": "scrapy/scrapy",
-                "url": "https://github.com/scrapy/scrapy",
-                "source": "github.com",
-                "summary": "Scrapy, a fast high-level web crawling & scraping framework for Python.",
-                "stars": 65307,
-                "language": "Python",
-                "updated_at": "2026-11-10T09:48:22Z"
-              },
-              {
-                "title": "soimort/you-get",
-                "url": "https://github.com/soimort/you-get",
-                "source": "github.com",
-                "summary": ":arrow_double_down: Dumb downloader that scrapes the web",
-                "stars": 56858,
-                "language": "Python",
-                "updated_at": "2026-11-10T08:05:39Z"
-              },
-              {
-                "title": "apify/crawlee-python",
-                "url": "https://github.com/apify/crawlee-python",
-                "source": "github.com",
-                "summary": "Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works with Parsel, BeautifulSoup, Playwright, and raw HTTP. Both headful and headless mode. With proxy rotation.",
-                "stars": 9658,
-                "language": "Python",
-                "updated_at": "2026-11-10T11:09:59Z"
-              }
-            ]
+            "error": "HTTPError",
+            "message": "403 Client Error: rate limit exceeded for url: https://api.github.com/search/repositories?q=web+scraping+language%3Apython&per_page=5&sort=stars&order=desc"
           }
         }
       ]

@@ -40,6 +40,6 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Bằng chứng
 
-- `starter_v0/runs/v0-group-quoc-two-tools_B_group_openai_20261110T183742208256.json`
+- `starter_v0/runs/v0-group-quoc-two-tools_B_group_openai_20261110T184823307765.json`
 - `report/team/group_report.md` (mục B3)
 - `report/team/2A202604113_PhamTranQuoc.md`

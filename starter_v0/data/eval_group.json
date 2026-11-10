@@ -41,13 +41,13 @@
       "metadata": {"difficulty": "medium", "what_it_tests": "Thiếu chủ đề tìm kiếm thì hỏi lại thay vì gọi github_search với query rỗng hoặc đoán chủ đề."}
     },
     {
-      "id": "G05_company_policy_not_github",
+      "id": "G05_internal_rate_limit_policy",
       "phase": "B",
       "suite": "group",
-      "query": "Theo policy công ty, có được đưa API key vào prompt của model không?",
+      "query": "Theo policy nội bộ, khi API nghiên cứu miễn phí bị rate limit thì agent có được che giấu lỗi trong run JSON không?",
       "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "data_privacy"}}]},
-      "metadata": {"difficulty": "medium", "what_it_tests": "Yêu cầu hỏi policy nội bộ phải route tới policy với policy_area=data_privacy, không dùng vùng all hoặc tìm web."}
+      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "tool_usage"}}]},
+      "metadata": {"difficulty": "medium", "what_it_tests": "Câu hỏi về cách xử lý rate limit theo quy định nội bộ phải route tới policy với policy_area=tool_usage, không tìm web hoặc dùng vùng all."}
     },
     {
       "id": "G06_multiturn_github_language_and_limit",
