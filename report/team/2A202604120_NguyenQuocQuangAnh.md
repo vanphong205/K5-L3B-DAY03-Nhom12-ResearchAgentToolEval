@@ -52,7 +52,13 @@ Tất cả run dùng provider OpenAI, model `gpt-4o-mini`, suite `base`; mỗi r
 - Provider preflight OpenAI thành công với `gpt-4o-mini`.
 - Cấu hình khóa được nạp từ file `.env` ngoài repository qua `DAY03_ENV_FILE`; không sao chép hoặc ghi giá trị khóa vào project.
 
-## 6. Khó khăn, giải pháp và phối hợp
+## 6. Sử dụng AI và kiểm tra kết quả
+
+Codex hỗ trợ chỉnh system prompt và mô tả tool, chạy eval và pytest, đối chiếu các run JSON với version log và soạn báo cáo. Kết quả được kiểm tra bằng số liệu trong từng run JSON, bằng cách đối chiếu hash với version log và bằng kết quả pytest. Tôi cần đọc lại từng giả thuyết v1–v3 và giải thích được vì sao R12 vẫn chưa đạt.
+
+Hash v3 được tính trên hai file trong checkout Windows với xuống dòng CRLF. Git lưu cùng nội dung với xuống dòng LF, nên hash trên checkout dùng LF sẽ khác. Có thể đối chiếu hash đã ghi bằng cách chuyển xuống dòng của `system_prompt.md` và `tools.yaml` từ LF sang CRLF trước khi tính SHA-256.
+
+## 7. Khó khăn, giải pháp và phối hợp
 
 Khó khăn chính là run/version log có sẵn trên nhánh HoangMinh không khớp hash tool declaration của source đã commit. Tôi kiểm tra hash, giữ run cũ làm tham khảo và tạo chuỗi v0–v3 mới từ đúng source của `origin/main` để so sánh có kiểm soát.
 
