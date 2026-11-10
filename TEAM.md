@@ -73,4 +73,20 @@ Sao chép mục dưới đây cho từng thành viên.
 * Files: `starter_v0/tools/github_search/`, `starter_v0/tools/hf_search/`, `starter_v0/tools/__init__.py`, `starter_v0/artifacts/tools.yaml`, `starter_v0/tests/test_tools_todo.py`.
 * Báo cáo cá nhân: `report/team/2A202604091_TruongVanPhong.md`
 
+## PHẠM TRẤN QUỐC - 2A202604113
 
+### Phần việc phụ trách
+
+* C5/CP4 — Team Evaluation: thiết kế 10 eval case, gồm 5 single-turn và 5 multi-turn, chạy group eval và phân tích lỗi.
+
+### Đóng góp cụ thể
+
+* Viết `starter_v0/data/eval_group.json`, đo lựa chọn hai tool mới `github_search`, `hf_search` và các tình huống phân biệt với `papers`/`policy`.
+* Chạy Group Eval cuối bằng OpenAI `gpt-4o-mini`, phân tích ba case chưa đạt và giới hạn do GitHub API rate limit.
+* Điền mục B3 của `report/team/group_report.md` và hoàn thiện báo cáo cá nhân với bằng chứng run v3.
+
+### Bằng chứng
+
+* `starter_v0/runs/v3_B_group_openai_20261110T192353230210.json`
+* `report/team/group_report.md` (mục B3)
+* `report/team/2A202604113_PhamTranQuoc.md`
