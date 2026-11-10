@@ -2,7 +2,7 @@
 
 ## Thông tin nhóm
 
-* Tên nhóm:
+* Tên nhóm: Nhóm 12
 * Lớp: L3B
 * Repo nhóm: K5-L3B-DAY03-Nhom12-ResearchAgentToolEval
 * URL repo, nhánh nộp, commit chốt: https://github.com/vanphong205/K5-L3B-DAY03-Nhom12-ResearchAgentToolEval
@@ -16,7 +16,7 @@
 |3|Phạm Trấn Quốc	|2A202604113|phamquoc896@gmail.com|https://github.com/Quoosc|Thành viên|
 |4|Nguyễn Anh Tú	|2A202604088|comtrang378@gmail.com|https://github.com/comtrang378-ship-it|Thành viên|
 |5|Trương Văn Phong	|2A202604091|phongtruongvan2005@gmail.com|https://github.com/vanphong205|Thành viên|
-|6|Trần Anh Dũng|2A202604037|dungkidx01@gmail.com|https://github.com/tad-4963|Thành viên|
+|6|Trần Anh Dũng|2A202604037|dungkidx01@gmail.com|https://github.com/tad-4963|Testing|
 
 ## Cá nhân
 
@@ -95,3 +95,26 @@ Sao chép mục dưới đây cho từng thành viên.
   * `starter_v0/artifacts/system_prompt.md` (quy tắc cải thiện cho Group Eval)
 * `report/team/group_report.md` (mục B3)
 * `report/team/2A202604113_PhamTranQuoc.md`
+
+## TRẦN ANH DŨNG - 2A202604037
+
+### Phần việc phụ trách
+
+* Vai trò: Testing (CP1, CP5) theo phân công nhóm.
+* Cài đặt môi trường phát triển, thiết lập cấu hình biến môi trường (`.env`) và chạy kiểm thử baseline `v0` ban đầu (CP1).
+* Kiểm thử tương tác trực tiếp nhiều lượt (Live Chat) qua `chat.py` với Agent (CP5 / Step 5), thu thập biên bản transcript JSON thực tế.
+* Kiểm thử tích hợp (Integration Testing): chạy và kiểm tra toàn bộ suite test của hệ thống bằng pytest.
+
+### Đóng góp cụ thể
+
+* Cài đặt môi trường & Baseline v0: Thiết lập môi trường Python 3.12, file `.env` với các khóa API (`OPENAI_API_KEY`, `TAVILY_API_KEY`, `RAPIDAPI_KEY`, `FIRECRAWL_API_KEY`). Chạy kiểm thử baseline ban đầu `v0` trên bộ 20 case chuẩn `data/eval_base.json` (đạt 13/20 case, 65%, 0 provider error) lưu tại `starter_v0/runs/v0_B_base_openai_20261110T191849190666.json`, phân loại các lỗi sai ban đầu của starter prompt để bàn giao dữ liệu cho nhóm.
+* Live Chat tương tác thực tế (Step 5): Thực hiện phiên hội thoại trực tiếp 4 lượt qua `chat.py` với model OpenAI `gpt-4o-mini`, lưu trữ transcript tại `starter_v0/transcripts/v3_openai_20261110T194827688215.transcript.json`. Kiểm chứng thực tế các hành vi: routing tool mới `hf_search`, xử lý yêu cầu thiếu thông tin, cập nhật context đa lượt và cơ chế guardrail chặn gửi tin của tool `send`.
+* Kiểm thử tích hợp: Thực hiện kiểm thử toàn bộ test suite của hệ thống bằng `pytest starter_v0/tests`, xác nhận 93 passed, 0 failed, 0 skipped (65 tool contract tests, 7 example tests, 21 unit tests).
+
+### Bằng chứng
+
+* Môi trường & Baseline v0: `starter_v0/.env`, `starter_v0/runs/v0_B_base_openai_20261110T191849190666.json`.
+* Live chat transcript: `starter_v0/transcripts/v3_openai_20261110T194827688215.transcript.json`.
+* Live chat evidence nhóm: `report/team/group_report.md` (mục B4).
+* Kiểm thử pytest: `starter_v0/tests/` → 93 passed, 0 skipped, 0 failed.
+* Báo cáo cá nhân: `report/team/2A202604037_TranAnhDung.md`.

@@ -137,11 +137,14 @@ Người phụ trách: **Phạm Trấn Quốc**. Bộ case: [eval_group.json](..
 
 ### B4. Live Chat Evidence
 
-Lấy từ `starter\_v0/transcripts/\*.transcript.json`.
+Lấy từ [v3_openai_20261110T194827688215.transcript.json](../../starter_v0/transcripts/v3_openai_20261110T194827688215.transcript.json) (người thực hiện kiểm thử: **Trần Anh Dũng**).
 
 |Turn|User Request|Tool Calls|Version Evidence|Outcome|
-|-|-|-|-|-|
-||||||
+|-:|-|-|-|-|
+|1|Tìm giúp mình 3 model Qwen2.5 phổ biến nhất trên Hugging Face và tóm tắt ngắn gọn.|`hf_search(query="qwen2.5", max_results=3)` → `format(template="bullets", headline="Top 3 Qwen2.5 Models on Hugging Face")`|`v3+pf0c107a9d7a1+t1830714609c2`|Lấy đúng 3 model (`Qwen2.5-7B-Instruct`, `Qwen2.5-VL-7B-Instruct`, `Qwen2.5-1.5B-Instruct`) từ Hugging Face Hub và định dạng bản tóm tắt kèm link nguồn.|
+|2|Cho mình xem 3 tweet mới nhất nhé.|`timeline(screenname="sama", limit=3)`|`v3+pf0c107a9d7a1+t1830714609c2`|Yêu cầu thiếu thông tin tài khoản: do file `artifacts/system_prompt.md` trên nhánh `main` còn giữ bản starter (`pf0c107a9d7a1`), agent tự đoán `sama` thay vì gọi `clarify`; RapidAPI trả HTTP 403.|
+|3|Ý mình là của Andrej Karpathy nhé.|`timeline(screenname="karpathy", limit=3)`|`v3+pf0c107a9d7a1+t1830714609c2`|Bổ sung thông tin ở lượt sau: agent giữ đúng ngữ cảnh `limit=3` từ lượt 2 và ánh xạ chính xác tên Andrej Karpathy sang handle `karpathy`; RapidAPI trả HTTP 403.|
+|4|Gửi danh sách 3 model Qwen2.5 ở trên lên Telegram giúp mình.|Round 1: `send(text="...")` (`needs_confirmation`) → Round 2: `send(text="...", confirmed=true)`|`v3+pf0c107a9d7a1+t1830714609c2`|Ở round 1, guardrail của code tool `send` chặn lại (`status="needs_confirmation"`). Tuy nhiên do prompt starter khuyên gửi ngay, ở round 2 model tự truyền `confirmed=true` thay vì gọi `clarify(response_type="yes_no")` hỏi người dùng trước (tool dừng ở kiểm tra biến môi trường `TELEGRAM_BOT_TOKEN`).|
 
 ### B5a. Required Evidence — Tool mới, unit test, UI
 
