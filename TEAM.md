@@ -53,3 +53,24 @@ Sao chép mục dưới đây cho từng thành viên.
 * Các file thay đổi: starter\_v0/artifacts/system\_prompt.md, starter\_v0/artifacts/tools.yaml; kết quả thử nghiệm ghi trong starter\_v0/artifacts/version\_log.csv (sau khi cập nhật vào repo).
 * Báo cáo cá nhân: report/team/2A202604103\_HoangMinh.md
 
+## Trương Văn Phong - 2A202604091
+
+### Phần việc phụ trách
+
+* Phát triển và đăng ký 2 tool mới (`github_search`, `hf_search`) đúng chuẩn contract của hệ thống (CP3).
+* Viết unit test offline cho các tool mới và hoàn thiện toàn bộ các stub unit test trong `starter_v0/tests/test_tools_todo.py` (Test Challenge).
+
+### Đóng góp cụ thể
+
+* Cài đặt tool `github_search` (`starter_v0/tools/github_search/tool.py`, `TOOL.md`) gọi GitHub Search REST API (lọc `language`, sắp xếp `stars`/`forks`/`updated`/`best_match`, giới hạn `max_results` 1–10, trả error dict qua `err()` khi gặp lỗi), đồng bộ khai báo vào `starter_v0/tools/__init__.py` (`TOOL_FUNCTIONS`) và `starter_v0/artifacts/tools.yaml`.
+* Cài đặt tool `hf_search` (`starter_v0/tools/hf_search/tool.py`, `TOOL.md`) gọi Hugging Face Hub API cho `models` và `datasets` (hỗ trợ `kind`, `sort`, `max_results`, validate input và trả error dict qua `err()`), đồng bộ khai báo vào `starter_v0/tools/__init__.py` và `starter_v0/artifacts/tools.yaml`.
+* Viết 4 unit test cho `github_search`, 3 unit test cho `hf_search`, và hoàn thiện toàn bộ 14 stub unit test của các tool có sẵn (`clarify`, `format`, `send`, `lookup`, `fetch`, `timeline`, `social_search`, `policy`) trong `starter_v0/tests/test_tools_todo.py` dùng `fake_http` và `monkeypatch`.
+* Kiểm tra toàn bộ suite `pytest -v` từ `starter_v0/`: đạt 93 passed, 0 failed, 0 skipped (65 contract tests, 7 example tests, 21 tests trong `test_tools_todo.py`).
+
+### Bằng chứng
+
+* Commits: `8ece7ca` (thêm `github_search` và unit tests), `44616cc` (thêm `hf_search` và hoàn thiện toàn bộ test stubs), `7147314` (`.gitignore`).
+* Files: `starter_v0/tools/github_search/`, `starter_v0/tools/hf_search/`, `starter_v0/tools/__init__.py`, `starter_v0/artifacts/tools.yaml`, `starter_v0/tests/test_tools_todo.py`.
+* Báo cáo cá nhân: `report/team/2A202604091_TruongVanPhong.md`
+
+
