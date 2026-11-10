@@ -1,0 +1,1448 @@
+{
+  "run_id": "v3-qwen3b_B_base_ollama_20261110T223709953462",
+  "version": "v3-qwen3b",
+  "artifact_version": "v3-qwen3b+pc23df164a93f+tcdc5767cd787",
+  "prompt_hash": "c23df164a93faaee46849a9606a323e6e04670dc751589d4195ba6cc2a7f8523",
+  "tools_hash": "cdc5767cd787aff64b555164937a9181f193578e77eac232555858cac55f5257",
+  "phase": "B",
+  "suite": "base",
+  "provider": "ollama",
+  "model": "qwen2.5:3b",
+  "system_prompt": "E:\\VINAITHUCCHIEN\\K5-L3B-DAY03-Nhom12-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "E:\\VINAITHUCCHIEN\\K5-L3B-DAY03-Nhom12-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_base.json",
+  "dataset_id": "day03_v2_research_base",
+  "dataset_role": "base",
+  "description": "Core eval cho research agent: routing đúng tool + đúng args, hỏi lại khi thiếu (ask_user), xác nhận trước khi gửi, và xử lý câu ngoài phạm vi / không cần tool. Chấm trên tool_calls + args (subset). KHÔNG sửa file này — chỉ thêm case vào eval_group.json.",
+  "generated_at": "2026-11-10T22:37:09",
+  "summary": {
+    "total_cases": 20,
+    "measured_cases": 20,
+    "provider_error_cases": 0,
+    "passed_cases": 7,
+    "case_accuracy": 0.35,
+    "tool_routing_accuracy": 0.6,
+    "argument_accuracy": 0.35,
+    "multiturn_accuracy": 0.3333,
+    "failure_counts": {
+      "wrong_tool": 4,
+      "wrong_arg_value": 3,
+      "out_of_scope": 2,
+      "missing_info": 3,
+      "wrong_boundary": 1
+    },
+    "observed_mismatch_counts": {
+      "wrong_arg_value": 5,
+      "unexpected_tool_call": 2,
+      "missing_tool_call": 6
+    }
+  },
+  "results": [
+    {
+      "id": "R01_user_tweets_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_user_tweets_name_to_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Tin CỦA một người nổi tiếng → map tên Sam Altman thành handle sama rồi gọi get_user_tweets."
+      },
+      "input": "Tweet mới nhất của Sam Altman là gì?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "samaltman"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "screenname: expected 'sama', got 'samaltman'"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "samaltman"
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=samaltman"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R02_search_tweets_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_search_tweets",
+        "difficulty": "easy",
+        "what_it_tests": "Tweet theo CHỦ ĐỀ → search_tweets, không phải get_user_tweets."
+      },
+      "input": "Mọi người đang bàn gì về GPT-5 trên Twitter?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "GPT-5",
+              "search_type": "Latest"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "GPT-5",
+            "search_type": "Latest"
+          },
+          "result": {
+            "tool": "search_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=GPT-5&search_type=Latest"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R03_web_news_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_web_news",
+        "difficulty": "medium",
+        "what_it_tests": "Tin thời sự trên web → web_search topic=news, timeframe=day (hôm nay)."
+      },
+      "input": "Tin tức AI hôm nay có gì nổi bật?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI today",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "query: expected 'AI', got 'AI today'"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI today",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "AI today",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "AI Agents Have Yet to Disrupt Uber, DoorDash or Online Travel - Bloomberg",
+                "url": "https://www.bloomberg.com/news/newsletters/2026-11-10/ai-agents-have-yet-to-disrupt-uber-doordash-or-online-travel",
+                "source": "bloomberg.com",
+                "summary": "# Consumers Have an Awkward Relationship With AI Agents So Far\n\nConsumer adoption of AI agents is lagging for lack of trust and usefulness\n\nThis article is for subscribers only.\n\nWelcome to Bloomberg’s AI Today newsletter. Every weekday we’ll break down artificial intelligence’s threats and opportunities for businesses, workers, finance and economies. Sign up now if you’re not already on the list. [...] For all the hype around the productivity gains that autonomous AI agents could bring, most consumers just aren’t using them the way their creators intended.",
+                "score": 0.6688159
+              },
+              {
+                "title": "Cloud AI Today - FlowX.AI and Google Cloud Partner to Boost AI Deployments",
+                "url": "https://finance.yahoo.com/technology/ai/articles/cloud-ai-today-flowx-ai-124043727.html",
+                "source": "finance.yahoo.com",
+                "summary": "FlowX.AI, in collaboration with Google Cloud, is advancing the deployment of mission-critical AI agents beyond pilot stages into live production, especially within regulated industries. Initially joining forces through the Google for Startups program, FlowX.AI has integrated its specialized AI solutions into Google's Gemini platform for business. This collaboration emphasizes incorporating AI into core business processes rather than existing as supplementary tools, with governance and human [...] Oracle ended the day at $119.79 up 3.2%.\n Microsoft closed at $545.18 up 2.7%, not far from its 52-week high. Last week, Microsoft expanded a collaboration with Northern Trust to enhance AI-powered client onboarding, significantly reducing data preparation time while maintaining high privacy and security standards.\n Apple settled at $350.69 up 2.4%, not far from its 52-week high.\n\n## Where To Now? [...] 1. Deirdre Bosa Live!\n\n   Deirdre Bosa Live!\n2. AI\n\nTrending \n\n October inflation data\n Stock market today\n Wall Street's $1.6T rebound\n Nvidia live updates\n\nSimply Wall St.\n\n# Cloud AI Today - FlowX.AI and Google Cloud Partner to Boost AI Deployments\n\nSimply Wall St\n\n2 min read\n\n GOOGM\n\n  0.00%\n MSFT\n\n  +0.10%\n AAPL\n\n  +0.42%",
+                "score": 0.61834323
+              },
+              {
+                "title": "The World Has Changed: Insights From The New AI100 Report | Stanford HAI",
+                "url": "https://hai.stanford.edu/news/the-world-has-changed-insights-from-the-new-ai100-report",
+                "source": "hai.stanford.edu",
+                "summary": "of Oxford, draws on disciplines including computer science, philosophy, and sociology. The latest report offers a sweeping look at where AI stands today and where it may be headed. [...] Risks once dismissed as futuristic speculation are materializing. AI agents have broken out of secure testing environments and accessed external systems without authorization. The line between near-term ethical concerns (such as algorithmic bias) and longer-term existential risks is blurring, and the report warns that the rapid, poorly regulated deployment of today's most powerful systems is accelerating that convergence.\n\n## Governance Lacks Consensus [...] International AI governance remains fragmented, increasingly shaped by national security framing rather than global cooperation. Export controls, chip restrictions, and competitive pressures between the U.S. and China have turned AI into an instrument of geopolitical rivalry. While high-level summits have produced statements of principle, the report concludes they have fallen short of meaningful, enforceable commitments, even as publics worldwide call for stronger regulation.",
+                "score": 0.60133666
+              },
+              {
+                "title": "\"Everybody has access today. I think that's beta\": PE investors say AI's edge is in d | Ctech",
+                "url": "https://www.calcalistech.com/ctechnews/article/bjb8fverfe",
+                "source": "calcalistech.com",
+                "summary": "Asked what had surprised them most about AI, the panelists pointed in the same direction. Schaufele said that a year ago he would have named hallucinations, but \"today that's mostly solved.\" The gap now is the firms themselves. \"What's lacking is really us right now,\" he said, pointing to workflows, willingness to adopt AI and the way data is structured. [...] For Dolgin, the surprise was speed. Over Vista's 25 years, she said, technological change took longer to reach the business model. Today, \"the speed of adoption has been much faster than we've historically seen.\"\n\nCécile Mayer-Lévi, Head of Private Debt at Tikehau Capital, said AI now shapes how her team evaluates credit. \"It's part of the underwriting,\" she said. Every deal is assessed for whether AI is a risk or an opportunity. [...] Reiner Sigler raised the question of junior professionals, whose groundwork is increasingly handled by AI. Mayer-Lévi said the era of long, painful hours on presentations that hardly anyone read is ending. Schaufele saw an upside: with less number-crunching, juniors may join management meetings sooner and \"get exposed earlier to judgment.\"",
+                "score": 0.5559422
+              },
+              {
+                "title": "What Businesses Must Fix Before AI Agents Do the Shopping — CX Today",
+                "url": "https://cxtoday.com/what-businesses-must-fix-before-ai-agents-do-the-shopping",
+                "source": "cxtoday.com",
+                "summary": "can happen at scale now. You can fire up 20 different AI agents to do such transactions once you figure out a loophole. So that risk exponentially increases. Businesses will have to figure out how to critically monitor such channels if they expose their APIs and capabilities to them. [...] One is product discovery, which used to take a while. When we are interested in buying, let's say, a new DSLR camera for my hobby, I'm very much into going through ten or twenty different tabs, looking at different products, websites, and reviews, to finally make a judgment call and determine, \"This is the one that I want to go with.\" That used to take hours of my time. But with the AI agent at my hand, literally those hours have been shrunk into minutes, and now minutes are also shrinking into [...] To some extent, I would also say that first principles still continue to apply: your marketing spend should reflect where the performance is coming from, performance in terms of revenue, conversion, and so on. All the traditional metrics are still applicable down the funnel, when the transactions are happening. But up the funnel, the metrics around where the users are coming from and what intent they have for buying your products have gone out the window, because AI agents are typically not",
+                "score": 0.46395484
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R04_read_url_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_read_url",
+        "difficulty": "easy",
+        "what_it_tests": "Đã có link cụ thể → read_url, không phải web_search."
+      },
+      "input": "Tóm tắt bài này giúp mình: https://openai.com/blog/gpt-5",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/blog/gpt-5"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/blog/gpt-5"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "fetch",
+          "args": {
+            "url": "https://openai.com/blog/gpt-5"
+          },
+          "result": {
+            "tool": "read_url",
+            "url": "https://openai.com/blog/gpt-5",
+            "items": [
+              {
+                "title": "OpenAI",
+                "url": "https://openai.com/blog/gpt-5",
+                "source": "openai.com",
+                "summary": "OpenAI\n\n# 404\n\nSearch finds no result\n\nThe question still earns its keep\n\nAsk it a new way\n\nby [gpt-6-astra(opens in a new window)](https://chatgpt.com/?surface=work&model=gpt-6-astra-wm&openaicom-did=52cdc990-ae75-4748-bf07-215286d35858&openaicom_referred=true)"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R05_limit_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_limit",
+        "difficulty": "easy",
+        "what_it_tests": "Trích đúng limit=10 từ '10 tweet'."
+      },
+      "input": "Lấy 10 tweet mới nhất của Elon Musk",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 10
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 10
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "elonmusk",
+            "limit": 10
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=elonmusk"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R06_timeframe_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_timeframe",
+        "difficulty": "medium",
+        "what_it_tests": "'tuần này' → timeframe=week."
+      },
+      "input": "Tin công nghệ trong tuần này",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "tin công nghệ trong tuần này",
+              "topic": "general",
+              "timeframe": "week"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_arg_value",
+        "failures": [
+          "topic: expected 'news', got 'general'"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "tin công nghệ trong tuần này",
+            "topic": "general",
+            "timeframe": "week"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "tin công nghệ trong tuần này",
+            "topic": "general",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "Cổ phiếu công nghệ hồi phục sau đợt sụt giảm mạnh trong tuần trước",
+                "url": "https://baotintuc.vn/co-phieu-cong-nghe-hoi-phuc-sau-dot-sut-giam-manh-trong-tuan-truoc-post1401233.html",
+                "source": "baotintuc.vn",
+                "summary": "Bà Sally Auld, chuyên gia tại ngn hàng National Australia Bank, nhận định trong tuần này, các nhà đầu tư sẽ theo dõi sát sao để xác định xem đà tăng hiện tại chỉ đơn thuần là nhờ hoạt động mua vào khi giá thấp hay là khởi đầu cho một xu hướng bền vững hơn. Những lo ngại về quy định đối với lĩnh vực AI, cùng với triển vọng về chi tiêu vốn và dòng tiền tự do, là các yếu tố thúc đẩy xu hướng giảm thiểu rủi ro trong những tuần gần đy. Nhiều khả năng, các vấn đề này sẽ chưa thể sớm được giải quyết [...] Trong tuần này, các nhà đầu tư sẽ theo dõi sát sao số liệu lạm phát mới nhất từ Mỹ, sau khi báo cáo công bố cuối tuần trước cho thấy nền kinh tế nước này đã tạo ra số lượng việc làm trong tháng 10/2026 vượt xa dự báo. Những số liệu này sẽ đóng vai trò then chốt để Cục Dự trữ liên bang Mỹ (Fed) quyết định xem có tăng lãi suất trong cuộc họp tiếp theo vào tháng 12 tới hay không. Các nhà giao dịch dự báo khả năng Fed nng lãi suất là 80%. [...] ## Vietjet mở rộng cầu nối Việt Nam – Nhật Bản với đường bay mới Đà Nẵng – Osaka\n\nChagee đưa bản sắc Việt Nam vào hành trình kết nối qua Văn hóa Trà  \n\n## Chagee đưa bản sắc Việt Nam vào hành trình kết nối qua Văn hóa Trà\n\nFPT đề xuất hợp tác với Nhật Bản về AI, công nghệ lượng tử  \n\n## FPT đề xuất hợp tác với Nhật Bản về AI, công nghệ lượng tử\n\nDe Heus - Hùng Nhơn thúc đẩy chuỗi dự án trị giá 18.300 tỷ đồng  \n\n## De Heus - Hùng Nhơn thúc đẩy chuỗi dự án trị giá 18.300 tỷ đồng",
+                "score": 0.68420124
+              },
+              {
+                "title": "1.6K views | Trong phiên giao dịch đầu tuần, cổ phiếu Nvidia giảm mạnh, trái ngược với đà phục hồi của các chỉ số chứng khoán Mỹ và nhóm cổ phiếu công nghệ. Diễn biến này xuất hiện sau những thông tin liên quan đến đời tư của Giám đốc điều hành Nvidia Jensen Huang. | Báo điện tử VTV",
+                "url": "https://www.facebook.com/baodientuvtv/posts/trong-phi%C3%AAn-giao-d%E1%BB%8Bch-%C4%91%E1%BA%A7u-tu%E1%BA%A7n-c%E1%BB%95-phi%E1%BA%BFu-nvidia-gi%E1%BA%A3m-m%E1%BA%A1nh-tr%C3%A1i-ng%C6%B0%E1%BB%A3c-v%E1%BB%9Bi-%C4%91%C3%A0-ph%E1%BB%A5c-/1562903065884231",
+                "source": "facebook.com",
+                "summary": "bốc cháy dữ dội. Chiều 10/11, cơ quan chức năng TP. Hồ Chí Minh đang điều tra nguyên nhân vụ cháy tàu sắt đang neo đậu tại cảng Phước Tỉnh, gần cầu Cửa Lấp, xã Phước Hải. Theo thông tin ban đầu, khoảng 10h30 cùng ngày, chiếc tàu bất ngờ bốc cháy. Người dân tìm cách dập lửa nhưng không thành. Ngọn lửa nhanh chóng lan rộng, bao trùm toàn bộ tàu. Nhận tin báo, lực lượng Cảnh sát PCCC và CNCH (PC07, Công an TP. Hồ Chí Minh) huy động xe chữa cháy cùng cán bộ, chiến sĩ đến hiện trường, phối hợp với [...] tài sản trên tầng 3 căn nhà bị thiêu rụi, hư hỏng nặng. Lực lượng chữa cháy đã khống chế ngọn lửa, không để cháy lan sang các căn nhà lân cận trong hẻm. [...] [](\n\nMưa lớn kéo dài suốt đêm tại Thanh Hóa khiến nước sông dâng cao, gây sập mố cầu Bái Sim trên tuyến đường Nghi Sơn - Bãi Trành, một trong những tuyến giao thông huyết mạch của tỉnh.\n\nBáo điện tử VTV\n\n85.6K views\n\n · \n\n1d ago\n\nImage 24: Video thumbnail 0:41\n\n[](\n\nNgày 8/11, Tổng thống Mỹ Donald Trump cho biết khả năng Washington tiếp tục tiến hành các cuộc không kích nhằm vào Iran là rất thấp nếu các cuộc đàm phán giữa hai bên đạt được tiến triển.\n\nBáo điện tử VTV\n\n48.2K views\n\n · \n\n1d ago",
+                "score": 0.5408517
+              },
+              {
+                "title": "Bộ Khoa học và Công nghệ lý giải việc cấm nhập khẩu smartphone, máy tính cũ",
+                "url": "https://thanhtra.com.vn/chuyen-doi-so-DFC98D38D/bo-khoa-hoc-va-cong-nghe-ly-giai-viec-cam-nhap-khau-smartphone-may-tinh-cu-cba909480.html",
+                "source": "thanhtra.com.vn",
+                "summary": "12:36 04/11/2026\n\nThanh Hóa đẩy mạnh số hóa, xy dựng nền tảng dữ liệu số ngành Thanh tra\n\n### Thanh Hóa đẩy mạnh số hóa, xy dựng nền tảng dữ liệu số ngành Thanh tra\n\nVăn Thanh\n\n13:19 03/11/2026\n\n## Tin mới nhất\n\nTP Huế: 29 nghệ sĩ từ 7 quốc gia hội tụ tại Trại sáng tác điêu khắc quốc tế 2026 \n\n### TP Huế: 29 nghệ sĩ từ 7 quốc gia hội tụ tại Trại sáng tác điêu khắc quốc tế 2026\n\nMinh Tn\n\n16:04 05/11/2026 [...] ### Phòng khám Đa khoa Tm Anh Quận 7 đứng Nhất chất lượng phòng khám, đầu tư loạt công nghệ hiện đại, chi phí hợp lý, phục vụ gần 2.000 lượt khách mỗi ngày\n\n  08:43 02/11/2026\n Quảng Trị: Thanh tra 8 trường học, phát hiện một số bất cập trong quản lý tài chính\n\n  ### Quảng Trị: Thanh tra 8 trường học, phát hiện một số bất cập trong quản lý tài chính\n\n  12:21 04/11/2026\n Thanh Hóa: Kết luận thanh tra hai dự án Nobel School, làm rõ nhiều tồn tại về đất đai [...] ### Thanh tra Chính phủ thanh tra công tác quản lý vốn, tài sản tại Tổng Công ty Bưu điện Việt Nam\n\n  15:59 02/11/2026\n\n## Tin cùng chuyên mục\n\nTP Cần Thơ: Phát huy 4 lợi thế thu hút đầu tư, thúc đẩy khoa học công nghệ \n\n### TP Cần Thơ: Phát huy 4 lợi thế thu hút đầu tư, thúc đẩy khoa học công nghệ",
+                "score": 0.46016815
+              },
+              {
+                "title": "AI\\ : Alphabet lên kế hoạch gọi vốn kỷ lục, 4 Big Tech được dự báo chi lượng tiền gấp 2 lần GDP Việt Nam cho AI: Thấy gì từ \"cuộc đua\" này?",
+                "url": "https://cafef.vn/ai.html",
+                "source": "cafef.vn",
+                "summary": "02/11/2026 13:48\n\nDu lịch Nhật Bản luôn hấp dẫn, nhưng rào cản ngôn ngữ tại các quán ăn địa phương lại là nỗi ám ảnh lớn. MENU-PAAN, một ứng dụng AI đột phá, ra đời để giải quyết triệt để vấn đề này, biến các thực đơn viết tay thành thông tin dễ hiểu.\n\nChùa ảo Hàn Quốc vừa nổi, Đài Loan đã có miếu Ma Tổ online, sáng sớm đã chật kín người xếp hàng chờ  \n\n### Chùa ảo Hàn Quốc vừa nổi, Đài Loan đã có miếu Ma Tổ online, sáng sớm đã chật kín người xếp hàng chờ \"gieo quẻ, xin xăm\"\n\n02/11/2026 09:00 [...] 02/11/2026 09:00\n\nChưa đầy một tuần sau khi ngôi chùa online Sansa làm nghẽn server ở Hàn Quốc, Đài Loan đã có miếu Ma Tổ ảo cho gieo quẻ m dương, xin xăm, còn người Công giáo có nhà thờ ảo để thắp nến. Thứ các sản phẩm này bán không phải tín ngưỡng, mà là quyền được ngồi yên mà không ai đòi hỏi gì.\n\nĐại diện FPT đề xuất hợp tác với doanh nghiệp Nhật Bản phát triển AI cho khu vực công Việt Nam \n\n### Đại diện FPT đề xuất hợp tác với doanh nghiệp Nhật Bản phát triển AI cho khu vực công Việt Nam [...] 03/11/2026 07:52\n\nLo ngại AI có thể hủy diệt nhn loại trong vòng 10 năm tới, cựu kỹ sư Google Nate Soares cho rằng tương lai quá bất định để tiếp tục tích lũy tiền cho tuổi nghỉ hưu.\n\nTừng làm cho Bộ ngoại giao Nhật Bản, người đàn ông này giờ đang phát triển ứng dụng dịch thuật món ăn ngay giữa thời đại AI \n\n### Từng làm cho Bộ ngoại giao Nhật Bản, người đàn ông này giờ đang phát triển ứng dụng dịch thuật món ăn ngay giữa thời đại AI\n\n02/11/2026 13:48",
+                "score": 0.4256297
+              },
+              {
+                "title": "Tin tức Sự kiện | Cổng Thông tin điện tử Bộ Khoa học và Công nghệ",
+                "url": "https://mst.gov.vn/tin-tuc-su-kien.htm",
+                "source": "mst.gov.vn",
+                "summary": "Bỏ qua đến nội dung chính\n\nBỘ KHOA HỌC VÀ CÔNG NGHỆ \n\nBỘ KHOA HỌC VÀ CÔNG NGHỆ Ministry of Science and Technology\n\nTiếng Việt English\n\nThứ ba, 10/11/2026\n\nDanh mục\n\n Trang chủ\n Giới thiệu  arrow-drop-down\n\n  Chức năng nhiệm vụ Cơ cấu tổ chức Lịch sử phát triển Sở Khoa học và Công nghệ\n Tin tức sự kiện  arrow-drop-down [...] ## Phát triển AI lấy con người làm trung tm, thúc đẩy hợp tác quốc tế\n\nTại Phiên bàn tròn Bộ trưởng Số và AI trong khuôn khổ Tuần lễ Số Quốc tế Việt Nam 2026, đại diện nhiều quốc gia và tổ chức quốc tế đã chia sẻ kinh nghiệm, định hướng chính sách và những ưu tiên trong phát triển, ứng dụng trí tuệ nhn tạo an toàn, hiệu quả và lấy con người làm trung tm.\n\nChương trình NEXUS giai đoạn 2025-2026 tài trợ 11 dự án nghiên cứu với tổng giá trị gần 500 tỷ đồng [...] Chuyển đổi trí tuệ nhn tạo (AI) không thể chỉ dựa vào nỗ lực của Chính phủ mà cần sự tham gia chặt chẽ của doanh nghiệp, các trường đại học, viện nghiên cứu và tổ chức quốc tế. Đy là thông điệp xuyên suốt Phiên thảo luận bàn tròn thứ hai với chủ đề \"Góc nhìn hợp tác: Doanh nghiệp, giới học thuật và các tổ chức quốc tế\", diễn ra sáng 28/10, trong khuôn khổ Tuần lễ Số Quốc tế Việt Nam 2026 tại Quảng Ninh.\n\nKết nối nghiên cứu với thị trường, mở rộng hợp tác đổi mới sáng tạo số ASEAN – EU",
+                "score": 0.3985943
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R07_search_type_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_search_type",
+        "difficulty": "medium",
+        "what_it_tests": "'phổ biến/top' → search_type=Top (không phải Latest)."
+      },
+      "input": "Cho mình các tweet phổ biến (top) nhất về OpenAI",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "OpenAI",
+              "search_type": "Top"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "OpenAI",
+            "search_type": "Top"
+          },
+          "result": {
+            "tool": "search_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/search.php?query=OpenAI&search_type=Top"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R08_out_of_scope",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      },
+      "input": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "original function of x^2",
+              "topic": "general",
+              "timeframe": "",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": "unexpected_tool_call",
+        "failure_type": "out_of_scope",
+        "failures": [
+          "expected no tool call"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "original function of x^2",
+            "topic": "general",
+            "timeframe": "",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "original function of x^2",
+            "topic": "general",
+            "timeframe": "",
+            "items": [
+              {
+                "title": "What is the inverse function of $\\ x^2+x$?",
+                "url": "https://math.stackexchange.com/questions/199377/what-is-the-inverse-function-of-x2x",
+                "source": "math.stackexchange.com",
+                "summary": "for x$x$, so we have a problem. It is fundamentally the same issue as the one we have with the simpler function x 2$x^{2}$. And there is a very similar fix: restricting the domain of our original function. \nDefine a new function f+(x)$f_{+} \\left(\\right. x \\left.\\right)$ by f+(x)=x 2+x$f_{+} \\left(\\right. x \\left.\\right) = x^{2} + x$ if x≥−1/2$x \\geq - 1 / 2$, with f+(x)$f_{+} \\left(\\right. x \\left.\\right)$ undefined when x<−1/2$x < - 1 / 2$. Then the function g$g$ defined by [...] (2) Restrict the domain of the original function and find a left inverse. For example, we could consider f$f$ on the domain −1 2,∞)$\\left[\\right. - \\frac{1}{2} , \\infty \\left.\\right)$, and the function ϕ:[−1 4,∞)→R$\\phi : \\left[\\right. - \\frac{1}{4} , \\infty \\left.\\right) \\rightarrow \\mathbb{R}$ by ϕ(t)=1 2(−1+1+4 t−−−−−√)$\\phi \\left(\\right. t \\left.\\right) = \\frac{1}{2} \\left(\\right. - 1 + \\sqrt{1 + 4 t} \\left.\\right)$. Then we have ϕ∘f=Id$\\phi \\circ f = \\text{Id}$ on the domain [−1 [...] - [x] Targeting Cookies \n\nThese cookies are used to make advertising messages more relevant to you and may be set through our site by us or by our advertising partners. They may be used to build a profile of your interests and show you relevant advertising on our site or on other sites. They do not store directly personal information, but are based on uniquely identifying your browser and internet device.\n\n#### Performance Cookies\n\n- [x] Performance Cookies",
+                "score": 0.580091
+              },
+              {
+                "title": "Graph f(x) = 2x and its inverse function in the same rectangular - Blitzer 8th Edition Ch 5 Problem 92",
+                "url": "https://www.pearson.com/channels/college-algebra/textbook-solutions/blitzer-8th-edition-9780136970514/ch-04-exponential-and-logarithmic-functions/graph-f-x-2-x-and-its-inverse-function-in-the-same-rectangular-coordinate-system",
+                "source": "pearson.com",
+                "summary": "An inverse function reverses the effect of the original function, swapping inputs and outputs. For f(x) = 2^x, its inverse is the logarithmic function f⁻¹(x) = log₂(x). Graphically, the inverse reflects the original function across the line y = x, exchanging the roles of x and y.\n\nRecommended video:\n\nGuided course\n\n 4:30\n\nGraphing Logarithmic Functions\n\n### Graphing on Rectangular Coordinate System [...] Solve each logarithmic equation in Exercises 49–92. Be sure to reject any value of x that is not in the domain of the original logarithmic expressions. Give the exact answer. Then, where necessary, use a calculator to obtain a decimal approximation, correct to two decimal places, for the solution. ln(x−2)−ln(x+3)=ln(x−1)−ln(x+7)\n\n945\n\nviewsTextbook Question\n\nSolve each equation. 52x ⋅ 54x=125\n\n660\n\nviewsTextbook Question",
+                "score": 0.4948006
+              },
+              {
+                "title": "How do you find the inverse of a function? (steps) | Purplemath",
+                "url": "https://www.purplemath.com/modules/invrsfcn3.htm",
+                "source": "purplemath.com",
+                "summary": "What will this look like when I try to find the inverse algebraically? The Vertical Line Test says that I can't have two y's that share an x-value. That is, each x has to have a UNIQUE corresponding y value. But look at what happens when I try to solve for \"x=\":\n\nAffiliate\n\nMy original function:\n\nf (x) = x2 + 1\n\nFirst, I'll swap out the f (x) for the simpler y:\n\ny = x2 + 1\n\nNow I try to solve for \"x=\":\n\ny − 1 = x2 [...] Warning: The inverse-function notation is misleading; the \"minus one\" power in the inverse-function notation means \"the inverse of the original function\", not \"the reciprocal of the expression\". Don't confuse the two.\n\n Find the inverse of f (x) = x2 + 1, and state whether the inverse is a function. [...] I will be using the order in the first set of steps above. Whichever method you're supposed to use, make sure that you practice it enough that you remember the steps on the next test.\n\n Find the inverse of y = 3x − 2.\n\nHere's how the inverse-finding process works: I start with my original function:\n\ny = 3x − 2\n\nNow I'll try to solve for \"x =\":\n\nOnce I have \"x=\", I'll switch x and y; the new \"y=\" is the inverse.\n\nThen the inverse is:\n\nAffiliate\n\nAffiliate\n\nAlgebra Tutors",
+                "score": 0.43266314
+              },
+              {
+                "title": "1.7 - Inverse Functions",
+                "url": "https://people.richland.edu/james/lecture/m116/functions/inverses.html",
+                "source": "people.richland.edu",
+                "summary": "6. Wait! That inverse isn't a function because there are two values of y for every x. That's because of the ± that appeared when we took the square root of both sides. Now we go back to the original domain of x≥3. That means that for the inverse, the range is y≥3. Since y must be at least 3, we need the positive square root and not the negative. Without the restriction on x in the original function, it wouldn't have had an inverse function: 3 + sqrt[(x+5)/2] [...] Now, that last example is not to be said it can't be done, but it involves completing the square to obtain f(x) = (x-2)2+2, then inversing it so that you get f -1(x) = 2-sqrt(x-2).\n\nHowever, there is another way that doesn't rely so much on informality and will work whether or not you can figure out exactly what you did with exactly one x. [...] On this last function, the implied domain of the inverse is [0,1). That means that the range of the original function must have been [0,1), also. Check it on your calculator, and you'll see it is.",
+                "score": 0.3259822
+              },
+              {
+                "title": "1-09 Inverse Functions",
+                "url": "https://www.andrews.edu/~rwright/Precalculus-RLW/Text/01-09.html",
+                "source": "andrews.edu",
+                "summary": "Now it is time to explore the graphs of functions and their inverses further. Use the quadratic function f(x) = x2 restricted to the domain 0, ∞) so that it is one-to-one, and graph it as in figure 5.\n\n y=x^2 \n\nQuadratic function with domain restricted to [0, ∞) [...] (input of the original function), then the “inverse” is not a function at all! To put it differently, the quadratic function is not a one-to-one function; it fails the horizontal line test, so it does not have an inverse function. In order for a function to have an inverse, it must be a one-to-one function. [...] From the other side of the same problem, starting with the square (parent quadratic) function f(x) = x2. There is a problem creating the inverse, because for every given output of the quadratic function, there are two corresponding inputs (except when the input is 0). For example, the output 9 from the quadratic function corresponds to the inputs 3 and −3. But an output from a function is an input to its inverse; if this inverse input corresponds to more than one inverse output (input of the",
+                "score": 0.28959313
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R09_no_tool_capability",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "no_tool_meta",
+        "difficulty": "easy",
+        "what_it_tests": "Câu hỏi meta → trả lời thẳng, KHÔNG gọi tool."
+      },
+      "input": "Bạn là gì và làm được những gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi là một trợ lý nghiên cứu, tôi có thể tìm kiếm và tổng hợp thông tin từ nhiều nguồn khác nhau như mạng xã hội, web công khai, và các cơ sở dữ liệu học máy. Tôi có thể giúp bạn tìm hiểu về một chủ đề thông qua việc tìm kiếm và tổ chức thông tin.",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R10_missing_handle",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "clarify_missing_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Thiếu handle → ask_user, KHÔNG đoán bừa người nào."
+      },
+      "input": "Tóm tắt 5 tweet mới nhất giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "limit": 5,
+              "search_type": "Latest",
+              "screenname": "twitter_handle"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "missing_info",
+        "failures": [
+          "missing tool call clarify",
+          "extra tool call social_search"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "limit": 5,
+            "search_type": "Latest",
+            "screenname": "twitter_handle"
+          },
+          "result": {
+            "error": "TypeError",
+            "message": "search_tweets() got an unexpected keyword argument 'screenname'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R11_missing_url",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "clarify_missing_url",
+        "difficulty": "medium",
+        "what_it_tests": "Nói 'bài này' nhưng không có link → ask_user xin URL."
+      },
+      "input": "Tóm tắt bài viết này hộ mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi cần biết URL của bài viết nào bạn muốn tôi tóm tắt. Bạn có thể cung cấp URL không?",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "missing_info",
+        "failures": [
+          "missing tool call clarify"
+        ]
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R12_confirm_before_send",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "confirm_before_write",
+        "difficulty": "medium",
+        "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+      },
+      "input": "Đăng bản tin này lên Telegram giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi cần biết URL của bài tin này. Vui lòng cung cấp URL.",
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_boundary",
+        "failures": [
+          "missing tool call clarify"
+        ]
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R13_parallel_web_and_tweets",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "parallel_tool_calls",
+        "difficulty": "hard",
+        "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+      },
+      "input": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {
+              "query": "AI"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "general",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {
+              "screenname": "AI",
+              "search_type": "Latest"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "topic: expected 'news', got 'general'",
+          "query: expected 'AI', got None"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI",
+            "topic": "general",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "AI",
+            "topic": "general",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "Artificial intelligence",
+                "url": "https://www.dw.com/en/artificial-intelligence/t-42133476",
+                "source": "dw.com",
+                "summary": "1. Skip to content\n2. Skip to main menu\n3. Skip to more DW sites\n\nIn focus\n\nCOP31Ukraine warAI\n\nLatest audioLatest videos\n\nLive TV\n\nImage: AA/picture alliance\n\n# Artificial intelligence\n\nArtificial intelligence (AI) is technology to make computers and machines simulate human learning, comprehension, decision-making and even creativity.\n\nSkip next section News\n\n## News\n\nNovember 6, 2026\n\n### Data center protesters break into Microsoft site in Amsterdam\n\nNovember 6, 2026 [...] With the rapid advances in AI translation technology, some linguists think human interpreters may soon be obsolete.\n\nSocietyNovember 1, 202609:50 min\n\n### America's AI race: Are the risks being ignored?\n\nUS President Donald Trump says AI is the future. But a growing number of voters are worried about the risks.\n\nPoliticsOctober 24, 202605:15 min\n\n### Deepfakes, bots and distrust: How AI is shaping Israel's election [...] Israel's political parties are using AI for deepfakes, robocalls and bots. Experts warn that it could tilt the election.\n\nPoliticsOctober 19, 2026\n\n### You can get AI answers for free. Who really pays?\n\nEvery AI answer feels free, but there are energy and data center costs.\n\nBusinessOctober 19, 202603:21 min\n\n### The EU wants an AI revolution. But on whose terms?\n\nThe European Union wants to catch up on AI. Can it compete with the US while protecting workers, safety and the climate?",
+                "score": 0.65173227
+              },
+              {
+                "title": "Super Intelligence",
+                "url": "https://www.anl.gov/si",
+                "source": "anl.gov",
+                "summary": "Super Intelligence (SI), also known as Artificial Intelligence (AI), is transforming how we advance science, strengthen national security, and drive U.S. innovation leadership. Argonne is leveraging world-class expertise and computing power to lead in the responsible development and deployment of SI. Our researchers are applying cutting-edge SI to engineer next-generation materials, fortify the nation’s energy infrastructure, speed breakthroughs in medical treatments, and automate scientific [...] automate scientific experiments. These efforts are unlocking new frontiers of discovery while enhancing resilience and competitiveness across critical sectors.",
+                "score": 0.49318945
+              },
+              {
+                "title": "Artificial Intelligence | Artificial Intelligence",
+                "url": "https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence",
+                "source": "aws.amazon.com",
+                "summary": "Gen Digital built Norton Revamp, a generative AI-powered professional reputation management platform, with an AI-curated News Engine grounded by Web Search on Amazon Bedrock AgentCore. See how the Gen team delivers real-time, cited content suggestions, goal setting, and news feeds with zero data egress and Norton-grade privacy.\n\nBuild a semantic layer for agentic AI with EDB Postgres AI and Amazon Bedrock AgentCore [...] How Gen Digital built Norton Revamp’s AI-curated News Engine with Amazon Bedrock AgentCore Web Search\n\n## How Gen Digital built Norton Revamp’s AI-curated News Engine with Amazon Bedrock AgentCore Web Search [...] Web Answer on Amazon Bedrock AgentCore returns a synthesized, source-cited answer to a natural-language question in a single tool call, with no search, retrieve, synthesize, and citation pipeline to build. Learn how it works and how to add it to an AgentCore Gateway and call it from an agent.\n\nHow Amazon Marketplace evaluates content quality with Amazon SageMaker AI\n\n## How Amazon Marketplace evaluates content quality with Amazon SageMaker AI",
+                "score": 0.39138326
+              },
+              {
+                "title": "C3.ai, Inc. (AI) Stock Price, News, Quote & History - Yahoo Finance",
+                "url": "https://finance.yahoo.com/quote/AI",
+                "source": "finance.yahoo.com",
+                "summary": "| AI Q2 FY2025 earnings call transcript | 2025 | Q2 | 2024-12-09 | 2026-07-08 | 3740916 | IN_HOUSE | 228044 | Earnings call | s3://890742573995-market-data-service-prod-us-east-1/shared/transcripts/2024/12/9/3740916.json |\n| AI Q1 FY2025 earnings call transcript | 2025 | Q1 | 2024-09-04 | 2026-06-27 | 2641096 | IN_HOUSE | 198847 | Earnings call | s3://890742573995-market-data-service-prod-us-east-1/shared/transcripts/2024/9/4/2641096.json | [...] | Field | Value |\n --- |\n| Previous close | 12.01 |\n| Open | 11.70 |\n| Day low | 11.47 |\n| Day high | 11.91 |\n| Dividend yield | 0.00% |\n| Beta | 2.13 |\n| Forward pe | -24.82 |\n| Volume | 192,762 |\n| Average volume | 4,944,542 |\n| Average volume10days | 4,022,950 |\n| Average daily volume10 day | 4,022,950 |\n| Bid | 11.92 |\n| Ask | 0.00 |\n| Bid size | 70,000 |\n| Ask size | 100,000 |\n| Market cap | 1,876,300,928 |\n| Non diluted market cap | 1,879,516,516 |\n| Fifty two week low | 7.68 | [...] | AI Q4 FY2026 earnings call transcript | 2026 | Q4 | 2026-06-03 | 2026-06-27 | 3471122 | IN_HOUSE | 557460 | Earnings call | s3://890742573995-market-data-service-prod-us-east-1/shared/transcripts/2026/6/3/3471122.json |\n| AI Q3 FY2026 earnings call transcript | 2026 | Q3 | 2026-02-25 | 2026-06-27 | 3232845 | IN_HOUSE | 483789 | Earnings call | s3://890742573995-market-data-service-prod-us-east-1/shared/transcripts/2026/2/25/3232845.json |",
+                "score": 0.3667717
+              },
+              {
+                "title": "A New AI Tool From Google DeepMind Proved the Signal Protocol Is Secure | WIRED",
+                "url": "https://www.wired.com/story/a-new-ai-tool-from-google-deepmind-formally-verified-the-signal-protocol",
+                "source": "wired.com",
+                "summary": "The researchers say that some of their crucial advancements are in developing a “human-AI collaboration process,” as Chaudhuri puts it, that allows agents to contribute and self-correct at almost every phase of the process while still seeking human input and review at key junctures. “We don’t want this sort of vibe world where AI is generating the goals and AI is generating the proofs and basically taking tests that are self-written,\" Chaudhuri says. “There’s a middle ground.” [...] Before the AI era, it was incredibly time-consuming for people to describe the characteristics of software they wanted to prove, turn these summaries into formulas, and then develop the proof. Agentic AI can significantly cut down the time of the latter project, enabling analyses like DeepMind's Signal evaluation. But even this analysis was limited in scope—it did not, for example, formally verify the entire Signal mobile app—and DeepMind researchers emphasize that their findings are just one [...] More broadly, AI-aided formal verification is having a moment, but it is unclear how practical it will be for widespread use and how effective it can be at securing large amounts of code. Proponents of formal verification have long referred to it as a sort of holy grail in software security, because it uses math to check and validate that software is functioning as intended—in other words, that it doesn't have critical vulnerabilities.",
+                "score": 0.28954792
+              }
+            ]
+          }
+        },
+        {
+          "tool": "social_search",
+          "args": {
+            "screenname": "AI",
+            "search_type": "Latest"
+          },
+          "result": {
+            "error": "TypeError",
+            "message": "search_tweets() got an unexpected keyword argument 'screenname'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "R14_out_of_scope_coding",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      },
+      "input": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn tôi viết hàm Python tính Fibonacci bằng cách sử dụng recursion đúng không?",
+              "response_type": "choice",
+              "options": [
+                "yes",
+                "no"
+              ]
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": "unexpected_tool_call",
+        "failure_type": "out_of_scope",
+        "failures": [
+          "expected no tool call"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn tôi viết hàm Python tính Fibonacci bằng cách sử dụng recursion đúng không?",
+            "response_type": "choice",
+            "options": [
+              "yes",
+              "no"
+            ]
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn tôi viết hàm Python tính Fibonacci bằng cách sử dụng recursion đúng không?",
+            "response_type": "choice",
+            "options": [
+              "yes",
+              "no"
+            ],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "M01_clarify_then_fill",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_fill",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: carry limit=5 từ lượt 1 + map tên Elon Musk thành handle elonmusk từ lượt 2."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tóm tắt 5 tweet mới nhất giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Của Elon Musk nhé"
+        },
+        {
+          "role": "user",
+          "content": "Giữ đúng 5 tweet, đừng đổi số lượng"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 5
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 5,
+              "search_type": "Latest"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "missing_info",
+        "failures": [
+          "missing tool call timeline",
+          "extra tool call social_search"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "screenname": "elonmusk",
+            "limit": 5,
+            "search_type": "Latest"
+          },
+          "result": {
+            "error": "TypeError",
+            "message": "search_tweets() got an unexpected keyword argument 'screenname'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "M02_carryover_timeframe",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_carryover",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: chỉ xử lý latest turn, carry timeframe=day và topic=news, query robotics."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tin AI hôm nay có gì?"
+        },
+        {
+          "role": "user",
+          "content": "Còn về robotics thì sao?"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ tìm robotics thôi, vẫn là tin hôm nay"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "robotics",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "robotics",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "robotics",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "robotics",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "Ring announces Ring Robotics, ushering in a new era of security",
+                "url": "https://www.aboutamazon.com/news/devices/ring-drone-cam-rover-cam-security-robot",
+                "source": "aboutamazon.com",
+                "summary": "Ring Robotics is a new category of autonomous, mobile security—devices that patrol, investigate, and respond automatically.\n Ring Drone Cam is a flying indoor security camera that delivers proactive whole-home visibility, flying custom routes to the spots a fixed camera can't reach.\n Ring Rover Cam is a purpose-built security robot for businesses that patrols autonomously, investigates disturbances, and streams in up to 4K video. [...] Now, Ring is launching Ring Robotics—a new era of security that doesn’t just monitor; it moves. It patrols. It responds. It investigates. Ring Robotics takes everything customers already love and trust about Ring and puts it in motion. [...] Ring Robotics is launching with two firsts: Ring Drone, a flying indoor security camera, and Ring Rover, an autonomous security robot designed for business. Both work with the Ring devices and app customers already know and rely on, adding a layer of mobile protection wherever it’s needed.\n\n## Ring Robotics: powered by AI Pilot",
+                "score": 0.6208291
+              },
+              {
+                "title": "Gemini Robotics 2.5: Accelerating Physical Intelligence — Google DeepMind",
+                "url": "https://deepmind.google/blog/gemini-robotics-2-5-accelerates-real-world-physical-intelligence",
+                "source": "deepmind.google",
+                "summary": "Today, we are introducing Gemini Robotics 2.5, our most capable vision-language-action (VLA) model to date. Gemini Robotics 2.5 increases both the breadth of skills a robot can learn and the speed at which it can acquire them. This enhances dexterity, reliability, and safety to help robots step out of the lab and into more unstructured, real-world environments, where they can assist people with a greater range of tasks. [...] Using our embodied reasoning model (Gemini Robotics ER) to keep track of the workflow, and the Gemini Robotics 2.5 actions model to control its hands and arms, the robot reaches into supply bins, picks up metal automotive brackets, and places them into sequencing containers, all while correcting for any gaps. Achieving a 96% success rate, this pilot shows promising progress toward widespread real-world industrial applications. [...] Gemini Robotics 2.5 uses inference-time reasoning guidance to steer around physical hazards in real-time. Much like safety classifiers add a protective layer around Gemini’s responses, this guidance allows the robot to navigate complex environments securely. In our evaluations, this capability boosted safe task completion around obstacles by 33% and around nearby people by 43%.",
+                "score": 0.5272928
+              },
+              {
+                "title": "Path Robotics Quadruples Valuation to $2.5 Billion in Latest Funding Round - Bloomberg",
+                "url": "https://www.bloomberg.com/news/articles/2026-11-10/path-robotics-quadruples-valuation-to-2-5-billion-in-latest-funding-round",
+                "source": "bloomberg.com",
+                "summary": "EXCLUSIVE\n\nStartups\n\n# Path Robotics Quadruples Valuation to $2.5 Billion in Latest Funding Round\n\nPath Robotics, a fast-growing startup that develops software for autonomous manufacturing robots, has secured $300 million in new financing that nearly quadruples the company’s valuation to $2.45 billion. [...] The Series E funding round was led by Georgian, an AI-focused growth equity firm, with participation from existing investors Addition, Drive Capital, IronArc Ventures, Tiger Global and Yamaha Motor Ventures. Two new backers, D. E. Shaw Ventures and Naver Ventures, also contributed. The startup has raised around $610 million to date.",
+                "score": 0.432807
+              },
+              {
+                "title": "Industry Insights: Path Robotics Raises $300M Series E | Association for Advancing Automation",
+                "url": "https://www.automate.org/robotics/industry-insights/path-robotics-raises-300m-at-2-25b-valuation",
+                "source": "automate.org",
+                "summary": "SUBSCRIBE TO A3 NEWSLETTERS\n\nThe A3 newsletters are your gateway to the latest industry updates, expert insights, and exclusive content in robotics, vision & imaging, motion control & motors, and industrial artificial intelligence technologies.\n\nSubscribe to A3 Newsletters\n\nSome of the new capital will be invested in expansion \"beyond welding into new manufacturing tasks and robotic form factors, along with increased investment in AI model training.\"\n\nAssociation for Advancing Automation Logo [...] Path notes in a release, \"The investment follows a period of rapid commercial expansion for Path Robotics, with annual recurring revenue (ARR) growing 17-fold over the past 18 months as the company scales deployments across major industrial customers in North America.\"\n\nToronto-based investment firm, Georgian, led the round, which also features participation from existing investors, Addition, Drive Capital, IronArc Ventures, Tiger Global, and Yamaha Motor Ventures. [...] MEET THE AUTHOR\n\n### Association for Advancing Automation\n\nDiscover how Association for Advancing Automation can support your automation journey with their complete range of solutions and expertise.\n\nSubscribe to the A3 Brief\n\n« Back To Robotics Industry Insights\n\nAssociation for Advancing Automation Logo\n\nAssociation for Advancing Automation AI Technology ProviderMotion Control & Motors Technology ProviderRobotics Technology ProviderVision Technology Provider\n\nMember Since 1974",
+                "score": 0.3935487
+              },
+              {
+                "title": "Ring Robotics launches a flying camera for homes and a patrol robot for business - The Gadgeteer",
+                "url": "https://the-gadgeteer.com/2026/11/10/ring-drone-cam-rover-cam-ring-robotics",
+                "source": "the-gadgeteer.com",
+                "summary": "Ring built its name on cameras that never move. A doorbell watches the porch, a stick-up cam watches the yard, and both wait for something to walk into frame. Ring Robotics ends the waiting. One of the new machines flies to the problem. The other drives to it. [...] Skip to content\n\nThe Gadgeteer – home\n\nSubscribe\n\nNews·Amazon·Robotics\n\n# Ring Robotics launches a flying camera for homes and a patrol robot for business\n\nVN\n\nBy Vincent Nguyen  · 6 min read\n\n  Ring Drone Cam flying above its charging dock \n\nIf you buy something from a link in this article, we may earn a commission. Learn more [...] Ring Rover Cam patrolling an office while Ring Drone Cam flies through a home\n\nAI Pilot maps the space and suggests patrol points for both machines\n\nAI Pilot is the system under both machines. It uses the cameras, vision models, onboard sensors, and cloud processing to map a space, suggest patrol points, and then navigate in real time around furniture, shelving, and whatever else is in the way.",
+                "score": 0.36514026
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "M03_correction_handle",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_correction",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: map tên thường, sửa Sam Altman→Andrej Karpathy, dùng handle karpathy và limit=3."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tweet mới nhất của Sam Altman"
+        },
+        {
+          "role": "user",
+          "content": "À nhầm, của Andrej Karpathy"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 tweet mới nhất nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "karpathy",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "AndrejKarpathy"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_arg_value",
+        "failures": [
+          "screenname: expected 'karpathy', got 'AndrejKarpathy'",
+          "limit: expected 3, got None"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "AndrejKarpathy"
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "error": "HTTPError",
+            "message": "403 Client Error: Forbidden for url: https://twitter-api45.p.rapidapi.com/timeline.php?screenname=AndrejKarpathy"
+          }
+        }
+      ]
+    },
+    {
+      "id": "M04_clarify_then_url",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_url",
+        "difficulty": "medium",
+        "what_it_tests": "3 turns: sau khi được cung cấp URL, latest turn xác nhận chỉ đọc link đó → read_url đúng url."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tóm tắt bài này hộ mình"
+        },
+        {
+          "role": "user",
+          "content": "https://anthropic.com/news/claude"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ đọc đúng link đó thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://anthropic.com/news/claude"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://anthropic.com/news/claude"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "fetch",
+          "args": {
+            "url": "https://anthropic.com/news/claude"
+          },
+          "result": {
+            "tool": "read_url",
+            "url": "https://anthropic.com/news/claude",
+            "items": [
+              {
+                "title": "https://anthropic.com/news/claude",
+                "url": "https://anthropic.com/news/claude",
+                "source": "anthropic.com",
+                "summary": "[Skip to main content](https://www.anthropic.com/news/claude#main-content)\n\nA 404 poem byClaude Fable 5Claude Opus 5.5Claude Sonnet 5.5Claude Haiku 5.5\n\nYou came"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "M05_correction_limit",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_arg_correction",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: map tên Elon Musk, carry handle elonmusk, sửa limit 10→3."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Lấy 10 tweet mới nhất của Elon Musk"
+        },
+        {
+          "role": "user",
+          "content": "Cho mình 3 thôi"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn của Elon Musk nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 3,
+              "search_type": "Latest"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_arg_value",
+        "failures": [
+          "missing tool call timeline",
+          "extra tool call social_search"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "screenname": "elonmusk",
+            "limit": 3,
+            "search_type": "Latest"
+          },
+          "result": {
+            "error": "TypeError",
+            "message": "search_tweets() got an unexpected keyword argument 'screenname'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "M06_switch_tool",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_tool",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Mọi người nói gì về OpenAI trên Twitter?"
+        },
+        {
+          "role": "user",
+          "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+        },
+        {
+          "role": "user",
+          "content": "Giữ chủ đề OpenAI"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "OpenAI",
+              "topic": "news"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "screenname": "OpenAI",
+              "search_type": "Latest"
+            }
+          }
+        ],
+        "actual_text": "",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "missing_tool_call",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "missing tool call lookup",
+          "extra tool call social_search"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "screenname": "OpenAI",
+            "search_type": "Latest"
+          },
+          "result": {
+            "error": "TypeError",
+            "message": "search_tweets() got an unexpected keyword argument 'screenname'"
+          }
+        }
+      ]
+    }
+  ]
+}
