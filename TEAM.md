@@ -53,6 +53,31 @@ Sao chép mục dưới đây cho từng thành viên.
 * Các file thay đổi: starter\_v0/artifacts/system\_prompt.md, starter\_v0/artifacts/tools.yaml; kết quả thử nghiệm ghi trong starter\_v0/artifacts/version\_log.csv (sau khi cập nhật vào repo).
 * Báo cáo cá nhân: report/team/2A202604103\_HoangMinh.md
 
+## NGUYENQUOCQUANGANH - 2A202604120
+
+## Phần việc phụ trách
+
+- CP2 — Prompt Engineering & Tool Optimization: phân tích baseline v0 và thực hiện ba vòng cải tiến v1, v2, v3 cho Research Agent.
+- Phụ trách chỉnh sửa `starter_v0/artifacts/system_prompt.md` và mô tả tool, điều kiện sử dụng cùng tham số trong `starter_v0/artifacts/tools.yaml`.
+- Chạy base evaluation với `data/eval_base.json`, kiểm tra contract/unit tests và cập nhật `starter_v0/artifacts/version_log.csv` cùng báo cáo cá nhân.
+
+## Đóng góp cụ thể
+
+- **Baseline v0:** chạy trên artifacts đã commit ở `origin/main`. Kết quả 13/20 case, case accuracy 65%, tool routing accuracy 75%, argument accuracy 65%, multi-turn accuracy 100%. Các lỗi chính gồm chọn sai tham số lookup, gọi tool cho yêu cầu ngoài phạm vi và không hỏi lại khi thiếu thông tin.
+- **v1 — System prompt:** bổ sung quy tắc chọn tool, hỏi lại khi thiếu thông tin, xử lý yêu cầu ngoài phạm vi và xác nhận trước khi gửi. Kết quả tăng lên 17/20 case, case accuracy 85%, tool routing accuracy 100%, argument accuracy 85%. Các lỗi còn lại là R10, R11 và R12 do thiếu `response_type`.
+- **v2 — Tool declarations:** làm rõ điều kiện dùng/không dùng tool và mô tả tham số, trong đó có cách chọn `response_type` cho `clarify`. Kết quả tăng lên 19/20 case, case accuracy 95%, tool routing accuracy 100%, argument accuracy 95%. R10 và R11 được sửa; R12 vẫn chọn `text` thay vì `yes_no`.
+- **v3 — Tinh chỉnh prompt:** dựa trên lỗi R12, yêu cầu xác nhận ý định gửi/đăng bằng yes/no trước, kể cả khi còn thiếu nội dung, đồng thời vẫn yêu cầu xác nhận chính xác nội dung trước khi gửi. Kết quả giữ ở 19/20 case, case accuracy 95%, multi-turn accuracy 100%. R12 tiếp tục chưa đạt và được ghi nhận là lỗi còn tồn tại.
+- **Kiểm thử:** contract test đạt 65 passed. Toàn bộ test suite đạt 93 passed, 0 skipped. Provider preflight OpenAI thành công. Các run eval đều đo đủ 20/20 case và có 0 provider errors.
+
+## Bằng chứng
+
+- **v0:** `starter_v0/runs/v0_B_base_openai_20261110T191849190666.json` — case accuracy 0.65.
+- **v1:** `starter_v0/runs/v1_B_base_openai_20261110T192004170716.json` — case accuracy 0.85.
+- **v2:** `starter_v0/runs/v2_B_base_openai_20261110T192122099163.json` — case accuracy 0.95.
+- **v3:** `starter_v0/runs/v3_B_base_openai_20261110T192240878196.json` — case accuracy 0.95; R12 vẫn chưa đạt.
+- Các file đã chỉnh sửa gồm `starter_v0/artifacts/system_prompt.md`, `starter_v0/artifacts/tools.yaml` và `starter_v0/artifacts/version_log.csv`.
+- Báo cáo cá nhân: `report/team/2A202604120_NguyenQuocQuangAnh.md`.
+
 ## Trương Văn Phong - 2A202604091
 
 ### Phần việc phụ trách
