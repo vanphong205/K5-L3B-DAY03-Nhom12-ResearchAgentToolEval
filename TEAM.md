@@ -102,26 +102,34 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Phần việc phụ trách
 
-* C5/CP4 — Team Evaluation: thiết kế 10 eval case, gồm 5 single-turn và 5 multi-turn, chạy group eval và phân tích lỗi.
+* C5/CP4 — Team Evaluation: phụ trách toàn bộ quy trình thiết kế, chạy, kiểm tra và giải thích Group Evaluation.
+* B7 — Small Local Model Challenge: xây dựng chuỗi đánh giá local model bằng Ollama, so sánh với cloud model và ghi nhận các giới hạn runtime.
+* Phụ trách liên kết evidence giữa dataset, run JSON, artifact hash, `version_log.csv`, báo cáo nhóm và báo cáo cá nhân; không nhận quyền tác giả đối với implementation của hai tool mới.
 
 ### Đóng góp cụ thể
 
-  * Thiết kế `starter_v0/data/eval_group.json` gồm đúng 10 case (5 single-turn, 5 multi-turn), bao phủ routing `github_search`/`hf_search`, thiếu thông tin, policy, chuyển nguồn và cập nhật truy vấn qua nhiều lượt.
-  * Chạy baseline Group Eval với OpenAI `gpt-4o-mini` (7/10, 70%), đọc expected/actual để phân tích lỗi G04, G05, G09; ghi nhận riêng GitHub API rate limit và không quy lỗi API thành lỗi provider.
-  * Cải thiện `starter_v0/artifacts/system_prompt.md`: yêu cầu hỏi lại bằng `clarify(response_type="text")` khi thiếu chủ đề; đặt `policy_area="tool_usage"` rõ ràng cho vấn đề API/tool; giữ khái niệm mới khi sửa query multi-turn. Chạy hai lượt xác nhận, lưu JSON riêng; lượt cuối đạt 10/10, routing/argument/multi-turn đều 100%, provider error 0.
-  * Cập nhật mục B3 trong `report/team/group_report.md` và báo cáo cá nhân gồm baseline, lần thử trung gian, run xác nhận, phân tích lỗi, hash/artifact version và giới hạn diễn giải. Không thay đổi dataset hoặc expected để tác động kết quả.
-  * Thực hiện bonus B7: chạy hai baseline Ollama (`qwen2.5:7b`, `qwen2.5:3b`) đủ 20 case, thử v4-local/v5-local trên Qwen 7B và kiểm tra ngược trên OpenAI. Ghi metric, run và giới hạn Llama 3B trong `version_log.csv`, B7 báo cáo nhóm và báo cáo cá nhân.
+  * Rà rubric, README, checkpoint, submission guide, `run_eval.py`, schema trong `tools.yaml` và registry để xác định chính xác contract mà Group Eval đọc: `query` hoặc `turns`, `expect`, `failure_type` và `metadata.what_it_tests`.
+  * Thiết kế `starter_v0/data/eval_group.json` gồm đúng 10 case duy nhất: G01–G05 là single-turn và G06–G10 là multi-turn. Bộ case bao phủ GitHub repository, Hugging Face dataset/model, clarification khi thiếu chủ đề, policy về rate limit, chuyển nguồn từ GitHub sang paper, carry-over/correction và gọi đồng thời hai tool mới.
+  * Thiết kế expected theo nguyên tắc đo đúng hành vi cần đo: G03 để arguments rỗng nhằm tập trung vào routing; G04 yêu cầu `clarify(response_type="text")`; G05 yêu cầu vùng policy hẹp `tool_usage`; G09 yêu cầu giữ đầy đủ ý “asynchronous web scraping”; G10 yêu cầu không bỏ yêu cầu GitHub khi thêm Hugging Face.
+  * Chạy baseline Group Eval với OpenAI `gpt-4o-mini`: 10/10 case được đo, 0 provider error, 7/10 case đạt (70%), routing 90%, arguments 70% và multi-turn 80%. Đọc `summary`, expected/actual calls, arguments, failure type và tool results thay vì chỉ lấy con số accuracy.
+  * Phân tích ba lỗi trọng tâm G04, G05 và G09. G04 ban đầu tự đoán chủ đề; G05 chọn `policy_area="all"` quá rộng; G09 làm mất ý “bất đồng bộ” khi sửa query. Các lỗi được phân biệt khỏi HTTP 403/rate limit của GitHub API để không quy lỗi dịch vụ thành lỗi provider hoặc lỗi routing.
+  * Cải thiện `starter_v0/artifacts/system_prompt.md`: yêu cầu hỏi lại bằng `clarify(response_type="text")` khi thiếu thông tin thiết yếu; ánh xạ rate limit/API/tool error sang `policy_area="tool_usage"`; giữ constraints cũ và đưa khái niệm mới vào query multi-turn.
+  * Chạy lại cùng dataset, model và expected sau khi thay đổi prompt. Lượt trung gian đạt routing 100% nhưng vẫn 7/10 do argument chưa đủ; lượt xác nhận cuối đạt 10/10, routing 100%, arguments 100%, multi-turn 100% và 0 provider error. Không sửa dataset hoặc expected để làm tăng điểm.
+  * Cập nhật B3, `version_log.csv`, `TEAM.md` và báo cáo cá nhân với run path, hash, giả thuyết, metric trước/sau và giới hạn diễn giải. Kết quả Group Eval được giữ đúng phạm vi là tool-call/argument behavior, không tuyên bố rằng API luôn trả dữ liệu chất lượng.
+  * Thực hiện B7 bằng Ollama: Qwen2.5 7B đạt 9/20 (45%) và Qwen2.5 3B đạt 7/20 (35%), đều đo đủ 20 case và 0 provider error. Llama 3.2 3B bị treo ở R12 trong hai lần full-run nên không được dùng làm baseline; subset 5 case được lưu riêng với nhãn diagnostic.
+  * Chạy hai vòng tối ưu local trên Qwen 7B: v4-local chỉ rút gọn system prompt, tăng lên 12/20 (60%); v5-local chỉ thay tool descriptions ngắn hơn, giảm còn 11/20 (55%). Ghi rõ routing, argument và multi-turn metrics, không chỉ ghi case accuracy.
+  * Chạy reverse-check v5-local trên OpenAI `gpt-4o-mini`, đạt 19/20 (95%), routing 100%, arguments 95%, multi-turn 100%, bằng cloud current baseline. Từ đó tách ảnh hưởng của artifact khỏi giới hạn diễn giải của local model.
+  * Lưu đầy đủ artifact B7 gồm `system_prompt_local.md`, `tools_local.yaml`, `eval_local_diag_llama.json`, 7 run JSON, transcript live và các dòng tương ứng trong `version_log.csv`; mọi kết luận B7 đều gắn với run thực tế.
 
 ### Bằng chứng
 
-* `starter_v0/runs/v3_B_group_openai_20261110T192353230210.json`
-  * `starter_v0/runs/group-quoc-clarify_B_group_openai_20261110T194544874142.json`
-  * `starter_v0/runs/group-quoc-clarify-v2_B_group_openai_20261110T194638090929.json`
-  * `starter_v0/runs/group-quoc-main-sync_B_group_openai_20261110T195411233028.json` (run xác nhận cuối trên prompt đã đồng bộ với `origin/main`)
-  * `starter_v0/artifacts/system_prompt.md` (quy tắc cải thiện cho Group Eval)
-* `report/team/group_report.md` (mục B3)
-* `report/team/2A202604113_PhamTranQuoc.md`
-* B7: `starter_v0/runs/v3-qwen7b_B_base_ollama_20261110T220201663566.json`, `starter_v0/runs/v3-qwen3b_B_base_ollama_20261110T223709953462.json`, `starter_v0/runs/v4-local_B_base_ollama_20261110T223020856578.json`, `starter_v0/runs/v5-local_B_base_ollama_20261110T223226373182.json`, `starter_v0/runs/cloud-v5-local_B_base_openai_20261110T223343542041.json`.
+* Dataset và Group Eval: `starter_v0/data/eval_group.json`; baseline `starter_v0/runs/v3_B_group_openai_20261110T192353230210.json`; run thử `starter_v0/runs/group-quoc-clarify_B_group_openai_20261110T194544874142.json`; run xác nhận `starter_v0/runs/group-quoc-clarify-v2_B_group_openai_20261110T194638090929.json`; run bàn giao sau đồng bộ `starter_v0/runs/group-quoc-main-sync_B_group_openai_20261110T195411233028.json`.
+* Artifact CP4: `starter_v0/artifacts/system_prompt.md`, `starter_v0/artifacts/tools.yaml`, `starter_v0/artifacts/version_log.csv`, mục B3 trong `report/team/group_report.md` và báo cáo cá nhân `report/team/2A202604113_PhamTranQuoc.md`.
+* B7 local baseline: `starter_v0/runs/v3-qwen7b_B_base_ollama_20261110T220201663566.json` và `starter_v0/runs/v3-qwen3b_B_base_ollama_20261110T223709953462.json`.
+* B7 optimization: `starter_v0/runs/v4-local_B_base_ollama_20261110T223020856578.json` và `starter_v0/runs/v5-local_B_base_ollama_20261110T223226373182.json`.
+* B7 cloud comparison: `starter_v0/runs/cloud-v3-current_B_base_openai_20261110T225134566688.json` và `starter_v0/runs/cloud-v5-local_B_base_openai_20261110T223343542041.json`.
+* B7 diagnostic evidence: `starter_v0/runs/diag-llama3b-subset_B_base_ollama_20261110T222756967652.json`, `starter_v0/data/eval_local_diag_llama.json`, `starter_v0/artifacts/system_prompt_local.md` và `starter_v0/artifacts/tools_local.yaml`.
+* Live chat evidence: `starter_v0/transcripts/v3-live-evidence_openai_20261110T223250499529.transcript.json`, gồm research paper, xử lý yêu cầu mơ hồ, bổ sung URL, fetch, hỏi xác nhận Telegram và hủy gửi không tạo side effect.
 
 ## TRẦN ANH DŨNG - 2A202604037
 
